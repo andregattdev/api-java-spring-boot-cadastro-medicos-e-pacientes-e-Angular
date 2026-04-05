@@ -1,0 +1,41 @@
+.action-btn {
+  border: none;
+  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.edit-btn {
+  background: linear-gradient(135deg, #fce043 0%, #f6ce00 100%);
+  color: #5c4e00;
+}
+
+.edit-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 12px rgba(246, 206, 0, 0.3);
+  color: #3d3400;
+  background: linear-gradient(135deg, #fdf08f 0%, #f7d52a 100%);
+}
+
+.delete-btn {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5253 100%);
+  color: white;
+}
+
+.delete-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 12px rgba(238, 82, 83, 0.3);
+  background: linear-gradient(135deg, #ff8e8e 0%, #fa6a6b 100%);
+}
+
+.action-btn:active {
+  transform: translateY(1px) scale(0.95);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}

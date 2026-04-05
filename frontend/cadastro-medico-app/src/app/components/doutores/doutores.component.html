@@ -1,0 +1,204 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h2>Doutores</h2>
+    </div>
+    <div class="col-md-6">
+      <button
+        class="btn btn-primary float-end"
+        (click)="abrirModal()"
+      >
+        <i class="fas fa-plus"></i> Novo Doutor
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="carregando" class="spinner-border" role="status">
+    <span class="sr-only">Por favor aguarde...</span>
+  </div>
+
+  <div *ngIf="!carregando && doutores.length === 0" class="alert alert-info">
+    Nenhum doutor registrado. Clique em "Novo Doutor" para adicionar.
+  </div>
+
+  <div *ngIf="!carregando && doutores.length > 0" class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Nome</th>
+          <th>CRM</th>
+          <th>Especialidade</th>
+          <th>Email</th>
+          <th>Telefone</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let doutor of doutores">
+          <td>{{ doutor.nome }}</td>
+          <td>{{ doutor.crm }}</td>
+          <td>{{ doutor.especialidade }}</td>
+          <td>{{ doutor.email }}</td>
+          <td>{{ doutor.telefone }}</td>
+          <td class="d-flex gap-2">
+            <button
+              class="action-btn edit-btn"
+              title="Editar"
+              (click)="abrirModal(doutor)"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+            <button
+              class="action-btn delete-btn"
+              title="Excluir"
+              (click)="deletarDoutor(doutor.id)"
+            >
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="doutorModal"
+    tabindex="-1"
+    [class.show]="displayModal"
+    [style.display]="displayModal ? 'block' : 'none'"
+    role="dialog"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ editando ? "Editar Doutor" : "Novo Doutor" }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="fecharModal()"
+          ></button>
+        </div>
+
+        <form [formGroup]="doutorForm" (ngSubmit)="salvarDoutor()">
+          <div class="modal-body">
+            <div class="form-outline mb-4">
+              <input
+                type="text"
+                id="nome"
+                class="form-control"
+                formControlName="nome"
+                [class.is-invalid]="f['nome'].touched && f['nome'].errors"
+              />
+              <label class="form-label" for="nome">Nome</label>
+              <div
+                *ngIf="f['nome'].touched && f['nome'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['nome'].errors['required']"
+                  >Nome é obrigatório</span
+                >
+                <span *ngIf="f['nome'].errors['minlength']"
+                  >Nome deve ter pelo menos 3 caracteres</span
+                >
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <input
+                type="text"
+                id="crm"
+                class="form-control"
+                formControlName="crm"
+                [class.is-invalid]="f['crm'].touched && f['crm'].errors"
+              />
+              <label class="form-label" for="crm">CRM</label>
+              <div
+                *ngIf="f['crm'].touched && f['crm'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['crm'].errors['required']">CRM é obrigatório</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <select
+                id="especialidade"
+                class="form-select form-control"
+                formControlName="especialidade"
+                [class.is-invalid]="f['especialidade'].touched && f['especialidade'].errors"
+              >
+                <option value="">Selecione uma especialidade...</option>
+                <option *ngFor="let esp of especialidades" [value]="esp">{{ esp.replace('_', ' ') }}</option>
+              </select>
+              <label class="form-label" for="especialidade">Especialidade</label>
+              <div
+                *ngIf="f['especialidade'].touched && f['especialidade'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['especialidade'].errors['required']"
+                  >Especialidade é obrigatória</span
+                >
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                formControlName="email"
+                [class.is-invalid]="f['email'].touched && f['email'].errors"
+              />
+              <label class="form-label" for="email">E-mail</label>
+              <div
+                *ngIf="f['email'].touched && f['email'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['email'].errors['required']">Email é obrigatório</span>
+                <span *ngIf="f['email'].errors['email']">O formato do email é inválido</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <input
+                type="tel"
+                id="telefone"
+                class="form-control"
+                formControlName="telefone"
+              />
+              <label class="form-label" for="telefone">Telefone</label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="fecharModal()"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="doutorForm.invalid"
+            >
+              {{ editando ? "Atualizar" : "Salvar" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div
+    class="modal-backdrop fade"
+    [class.show]="displayModal"
+    [style.display]="displayModal ? 'block' : 'none'"
+  ></div>
+</div>

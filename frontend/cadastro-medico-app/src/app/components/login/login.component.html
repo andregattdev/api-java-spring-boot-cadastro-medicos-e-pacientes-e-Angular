@@ -1,0 +1,97 @@
+<div class="container py-5">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+      <div class="card shadow-2-strong">
+        <div class="card-body p-5 text-center">
+          <h3 class="mb-5">Login</h3>
+
+          <div
+            *ngIf="error"
+            class="alert alert-danger alert-dismissible fade show"
+            role="alert"
+          >
+            {{ error }}
+            <button
+              type="button"
+              class="btn-close"
+              (click)="error = ''"
+              aria-label="Close"
+            ></button>
+          </div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email input -->
+            <div class="form-outline mb-4">
+              <input
+                type="email"
+                id="email"
+                class="form-control form-control-lg"
+                formControlName="email"
+                [class.is-invalid]="submitted && f['email'].errors"
+              />
+              <label class="form-label" for="email">Email</label>
+              <div
+                *ngIf="submitted && f['email'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['email'].errors['required']"
+                  >Email é obrigatório</span
+                >
+                <span *ngIf="f['email'].errors['email']"
+                  >Email inválido</span
+                >
+              </div>
+            </div>
+
+            <!-- Password input -->
+            <div class="form-outline mb-4">
+              <input
+                type="password"
+                id="senha"
+                class="form-control form-control-lg"
+                formControlName="senha"
+                [class.is-invalid]="submitted && f['senha'].errors"
+              />
+              <label class="form-label" for="senha">Senha</label>
+              <div
+                *ngIf="submitted && f['senha'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['senha'].errors['required']"
+                  >Senha é obrigatória</span
+                >
+                <span *ngIf="f['senha'].errors['minlength']"
+                  >Senha deve ter pelo menos 6 caracteres</span
+                >
+              </div>
+            </div>
+
+            <!-- Submit button -->
+            <button
+              class="btn btn-primary btn-lg btn-block"
+              type="submit"
+              [disabled]="loading"
+            >
+              <span
+                *ngIf="loading"
+                class="spinner-border spinner-border-sm me-2"
+                role="status"
+                aria-hidden="true"
+              ></span>
+              {{ loading ? "Entrando..." : "Entrar" }}
+            </button>
+          </form>
+
+          <hr class="my-4" />
+
+          <div>
+            <p class="text-muted">
+              Não tem conta?
+              <a href="/register" class="fw-bold text-primary">Registre-se</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

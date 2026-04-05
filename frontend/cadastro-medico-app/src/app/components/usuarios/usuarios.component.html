@@ -1,0 +1,217 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h2>Usuários</h2>
+    </div>
+    <div class="col-md-6">
+      <button
+        class="btn btn-primary float-end"
+        (click)="abrirModal()"
+      >
+        <i class="fas fa-plus"></i> Novo Usuário
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="carregando" class="spinner-border" role="status">
+    <span class="sr-only">Por favor aguarde...</span>
+  </div>
+
+  <div *ngIf="!carregando && usuarios.length === 0" class="alert alert-info">
+    Nenhum usuário registrado. Clique em "Novo Usuário" para adicionar.
+  </div>
+
+  <div *ngIf="!carregando && usuarios.length > 0" class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let usuario of usuarios">
+          <td>{{ usuario.nome }}</td>
+          <td>{{ usuario.email }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.bg-primary]="usuario.tipo === 'DOUTOR'"
+              [class.bg-info]="usuario.tipo === 'PACIENTE'"
+              [class.bg-warning]="usuario.tipo === 'FUNCIONARIO'"
+              [class.bg-secondary]="usuario.tipo === 'PARTICULAR'"
+            >
+              {{ usuario.tipo }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="badge"
+              [class.bg-success]="usuario.status === 'ATIVO'"
+              [class.bg-danger]="usuario.status === 'INATIVO'"
+            >
+              {{ usuario.status }}
+            </span>
+          </td>
+          <td>
+            <button
+              class="btn btn-sm btn-warning me-2"
+              (click)="abrirModal(usuario)"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deletarUsuario(usuario.id)"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="usuarioModal"
+    tabindex="-1"
+    [class.show]="displayModal"
+    [style.display]="displayModal ? 'block' : 'none'"
+    role="dialog"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ editando ? "Editar Usuário" : "Novo Usuário" }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="fecharModal()"
+          ></button>
+        </div>
+
+        <form [formGroup]="usuarioForm" (ngSubmit)="salvarUsuario()">
+          <div class="modal-body">
+            <div class="form-outline mb-4">
+              <input
+                type="text"
+                id="nome"
+                class="form-control"
+                formControlName="nome"
+                [class.is-invalid]="f['nome'].touched && f['nome'].errors"
+              />
+              <label class="form-label" for="nome">Nome</label>
+              <div
+                *ngIf="f['nome'].touched && f['nome'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['nome'].errors['required']"
+                  >Nome é obrigatório</span
+                >
+                <span *ngIf="f['nome'].errors['minlength']"
+                  >Nome deve ter pelo menos 3 caracteres</span
+                >
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <input
+                type="email"
+                id="email"
+                class="form-control"
+                formControlName="email"
+                [class.is-invalid]="f['email'].touched && f['email'].errors"
+              />
+              <label class="form-label" for="email">Email</label>
+              <div
+                *ngIf="f['email'].touched && f['email'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['email'].errors['required']"
+                  >Email é obrigatório</span
+                >
+                <span *ngIf="f['email'].errors['email']">Email inválido</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <select
+                id="tipo"
+                class="form-select"
+                formControlName="tipo"
+                [class.is-invalid]="f['tipo'].touched && f['tipo'].errors"
+              >
+                <option value="">Selecione um tipo</option>
+                <option *ngFor="let tipo of tiposUsuario" [value]="tipo">
+                  {{ tipo }}
+                </option>
+              </select>
+              <label class="form-label" for="tipo">Tipo</label>
+              <div
+                *ngIf="f['tipo'].touched && f['tipo'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['tipo'].errors['required']"
+                  >Tipo é obrigatório</span
+                >
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <select
+                id="status"
+                class="form-select"
+                formControlName="status"
+                [class.is-invalid]="f['status'].touched && f['status'].errors"
+              >
+                <option value="">Selecione um status</option>
+                <option value="ATIVO">Ativo</option>
+                <option value="INATIVO">Inativo</option>
+              </select>
+              <label class="form-label" for="status">Status</label>
+              <div
+                *ngIf="f['status'].touched && f['status'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['status'].errors['required']"
+                  >Status é obrigatório</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="fecharModal()"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="usuarioForm.invalid"
+            >
+              {{ editando ? "Atualizar" : "Salvar" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div
+    class="modal-backdrop fade"
+    [class.show]="displayModal"
+    [style.display]="displayModal ? 'block' : 'none'"
+  ></div>
+</div>

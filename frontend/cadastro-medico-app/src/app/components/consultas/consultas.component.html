@@ -1,0 +1,200 @@
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h2>Consultas</h2>
+    </div>
+    <div class="col-md-6">
+      <button
+        class="btn btn-primary float-end"
+        (click)="abrirModal()"
+      >
+        <i class="fas fa-plus"></i> Nova Consulta
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="carregando" class="spinner-border" role="status">
+    <span class="sr-only">Por favor aguarde...</span>
+  </div>
+
+  <div *ngIf="!carregando && consultas.length === 0" class="alert alert-info">
+    Nenhuma consulta registrada. Clique em "Nova Consulta" para agendar.
+  </div>
+
+  <div *ngIf="!carregando && consultas.length > 0" class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Data</th>
+          <th>Hora</th>
+          <th>Doutor</th>
+          <th>Paciente</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let consulta of consultas">
+          <td>{{ consulta.dataHora | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ consulta.dataHora | date: 'HH:mm' }}</td>
+          <td>{{ consulta.doutorNome || '-' }}</td>
+          <td>{{ consulta.pacienteNome || '-' }}</td>
+          <td>
+            <button
+              class="btn btn-sm btn-warning me-2"
+              (click)="abrirModal(consulta)"
+            >
+              <i class="fas fa-edit"></i>
+            </button>
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="deletarConsulta(consulta.id)"
+            >
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal -->
+  <div
+    class="modal fade"
+    id="consultaModal"
+    tabindex="-1"
+    [class.show]="displayModal"
+    [style.display]="displayModal ? 'block' : 'none'"
+    role="dialog"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ editando ? "Editar Consulta" : "Nova Consulta" }}
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            (click)="fecharModal()"
+          ></button>
+        </div>
+
+        <form [formGroup]="consultaForm" (ngSubmit)="salvarConsulta()">
+          <div class="modal-body">
+            <div class="form-outline mb-4">
+              <input
+                type="date"
+                id="data"
+                class="form-control"
+                formControlName="data"
+                [class.is-invalid]="f['data'].touched && f['data'].errors"
+              />
+              <label class="form-label" for="data">Data</label>
+              <div
+                *ngIf="f['data'].touched && f['data'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['data'].errors['required']"
+                  >Data é obrigatória</span
+                >
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <input
+                type="time"
+                id="hora"
+                class="form-control"
+                formControlName="hora"
+                [class.is-invalid]="f['hora'].touched && f['hora'].errors"
+              />
+              <label class="form-label" for="hora">Hora</label>
+              <div
+                *ngIf="f['hora'].touched && f['hora'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['hora'].errors['required']">Hora é obrigatória</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <select
+                id="doutorId"
+                class="form-select"
+                formControlName="doutorId"
+                [class.is-invalid]="f['doutorId'].touched && f['doutorId'].errors"
+              >
+                <option value="" disabled selected>Selecione um Doutor</option>
+                <option *ngFor="let doutor of doutores" [value]="doutor.id">
+                  {{ doutor.nome }} ({{ doutor.especialidade }})
+                </option>
+              </select>
+              <label class="form-label" for="doutorId">Médico</label>
+              <div
+                *ngIf="f['doutorId'].touched && f['doutorId'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['doutorId'].errors['required']">A escolha do Doutor é obrigatória</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <select
+                id="pacienteId"
+                class="form-select"
+                formControlName="pacienteId"
+                [class.is-invalid]="f['pacienteId'].touched && f['pacienteId'].errors"
+              >
+                <option value="" disabled selected>Selecione um Paciente</option>
+                <option *ngFor="let paciente of pacientes" [value]="paciente.id">
+                  {{ paciente.nome }} ({{ paciente.cpf }})
+                </option>
+              </select>
+              <label class="form-label" for="pacienteId">Paciente</label>
+              <div
+                *ngIf="f['pacienteId'].touched && f['pacienteId'].errors"
+                class="invalid-feedback d-block"
+              >
+                <span *ngIf="f['pacienteId'].errors['required']">A escolha do Paciente é obrigatória</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <textarea
+                id="observacoes"
+                class="form-control"
+                formControlName="observacoes"
+                rows="3"
+              ></textarea>
+              <label class="form-label" for="observacoes">Observações</label>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              (click)="fecharModal()"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-primary"
+              [disabled]="consultaForm.invalid"
+            >
+              {{ editando ? "Atualizar" : "Salvar" }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Backdrop -->
+  <div
+    class="modal-backdrop fade"
+    [class.show]="displayModal"
+    [style.display]="displayModal ? 'block' : 'none'"
+  ></div>
+</div>
