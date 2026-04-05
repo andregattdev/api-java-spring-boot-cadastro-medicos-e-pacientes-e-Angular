@@ -1,0 +1,28 @@
+# Build do Java
+target/
+build/
+out/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+
+# VS Code
+.vscode/
+
+# Angular / Node
+node_modules/
+dist/
+
+# Logs
+*.log
+
+# Temporários
+*.tmp
+*.swp
+*.swo
+*~
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
