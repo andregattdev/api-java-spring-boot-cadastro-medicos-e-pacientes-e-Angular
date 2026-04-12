@@ -19,6 +19,9 @@ public class PacienteUpdateDTO {
     @Pattern(regexp = "\\(?\\d{2}\\)?\\s?\\d{4,5}-?\\d{4}", message = "Telefone deve estar no formato correto")
     private String telefone;
 
+    @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}", message = "CPF deve estar no formato 000.000.000-00", flags = {})
+    private String cpf;
+
     private String status;
     private Long empresaId;
 
@@ -52,6 +55,14 @@ public class PacienteUpdateDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public Long getEmpresaId() {

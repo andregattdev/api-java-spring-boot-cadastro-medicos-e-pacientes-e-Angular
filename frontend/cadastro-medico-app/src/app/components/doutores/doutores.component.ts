@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DoutorService } from '../../services/doutor.service';
 import { DoutorDTO } from '../../models/doutor.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-doutores',
@@ -18,6 +19,7 @@ export class DoutoresComponent implements OnInit {
   editando = false;
   carregando = true;
   totalDoutores: number = 0;
+  isPaciente = false;
 
   especialidades = [
     'ALERGIA_IMUNOLOGIA', 'ANESTESIOLOGIA', 'ANGIOLOGIA', 'CANCEROLOGIA', 'CARDIOLOGIA',
@@ -39,8 +41,10 @@ export class DoutoresComponent implements OnInit {
     private doutorService: DoutorService,
     private formBuilder: FormBuilder,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {
+    this.isPaciente = this.authService.isPaciente();
     this.doutorForm = this.formBuilder.group({
       id: [''],
       nome: ['', [Validators.required, Validators.minLength(3)]],

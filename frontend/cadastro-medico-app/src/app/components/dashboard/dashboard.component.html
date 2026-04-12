@@ -1,176 +1,104 @@
-<div class="d-flex">
-  <!-- Sidebar -->
-  <nav [class.sidebar]="sidebarOpen" [class.sidebar-closed]="!sidebarOpen">
-    <div class="sidebar-header d-flex justify-content-between align-items-center">
-      <h3>Cadastro Médico</h3>
-      <button class="btn btn-sm btn-outline-primary" (click)="toggleSidebar()">
-        <i class="fas fa-bars"></i>
-      </button>
+<!-- Dashboard Cards Content -->
+<div class="container-fluid p-4">
+    <div class="row">
+    <!-- Card Pacientes -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Pacientes</h5>
+            <p class="card-text text-primary fs-2 fw-bold">
+            {{ totalPacientes$ | async }}
+            </p>
+        </div>
+        </div>
     </div>
 
-    <ul class="nav flex-column">
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/dashboard">
-          <i class="fas fa-home"></i>
-          <span *ngIf="sidebarOpen">Dashboard</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/pacientes">
-          <i class="fas fa-user-injured"></i>
-          <span *ngIf="sidebarOpen">Pacientes</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/doutores">
-          <i class="fas fa-stethoscope"></i>
-          <span *ngIf="sidebarOpen">Doutores</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/consultas">
-          <i class="fas fa-calendar-check"></i>
-          <span *ngIf="sidebarOpen">Consultas</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/usuarios">
-          <i class="fas fa-users"></i>
-          <span *ngIf="sidebarOpen">Usuários</span>
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/empresas">
-          <i class="fas fa-building"></i>
-          <span *ngIf="sidebarOpen">Empresas</span>
-        </a>
-      </li>
-    </ul>
-
-    <hr />
-
-    <div class="user-menu">
-      <button class="btn btn-danger w-100" (click)="logout()">
-        <i class="fas fa-sign-out-alt"></i>
-        <span *ngIf="sidebarOpen">Logout</span>
-      </button>
+    <!-- Card Doutores -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Doutores</h5>
+            <p class="card-text text-success fs-2 fw-bold">
+            {{ totalDoutores$ | async }}
+            </p>
+        </div>
+        </div>
     </div>
-  </nav>
 
-  <!-- Main Content -->
-  <div class="main-content">
-    <header class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-      <div class="container-fluid">
-        <span class="navbar-brand">Bem-vindo!</span>
-      </div>
-    </header>
-
-    <main class="container-fluid p-4">
-      <div class="row">
-        <!-- Card Pacientes -->
-        <div class="col-md-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Pacientes</h5>
-              <p class="card-text text-primary fs-2 fw-bold">
-                {{ totalPacientes$ | async }}
-              </p>
-            </div>
-          </div>
+    <!-- Card Consultas -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Consultas</h5>
+            <p class="card-text text-info fs-2 fw-bold">
+            {{ totalConsultas$ | async }}
+            </p>
         </div>
-
-        <!-- Card Doutores -->
-        <div class="col-md-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Doutores</h5>
-              <p class="card-text text-success fs-2 fw-bold">
-                {{ totalDoutores$ | async }}
-              </p>
-            </div>
-          </div>
         </div>
+    </div>
 
-        <!-- Card Consultas -->
-        <div class="col-md-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Consultas</h5>
-              <p class="card-text text-info fs-2 fw-bold">
-                {{ totalConsultas$ | async }}
-              </p>
-            </div>
-          </div>
+    <!-- Card Consultas Hoje -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Consultas Hoje</h5>
+            <p class="card-text text-danger fs-2 fw-bold">
+            {{ consultasHojeCount }}
+            </p>
         </div>
-
-        <!-- Card Consultas Hoje -->
-        <div class="col-md-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Consultas Hoje</h5>
-              <p class="card-text text-danger fs-2 fw-bold">
-                {{ consultasHojeCount }}
-              </p>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
+    </div>
 
-      <!-- Linha extra -->
-      <div class="row mt-3">
-        <!-- Card Consultas na Semana -->
-        <div class="col-md-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Consultas na Semana</h5>
-              <p class="card-text text-warning fs-2 fw-bold">
-                {{ consultasSemana }}
-              </p>
-            </div>
-          </div>
+    <!-- Linha extra -->
+    <div class="row mt-3">
+    <!-- Card Consultas na Semana -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Consultas na Semana</h5>
+            <p class="card-text text-warning fs-2 fw-bold">
+            {{ consultasSemana }}
+            </p>
         </div>
-
-        <!-- Card Consultas no Mês -->
-        <div class="col-md-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Consultas no Mês</h5>
-              <p class="card-text text-secondary fs-2 fw-bold">
-                {{ consultasMes }}
-              </p>
-            </div>
-          </div>
         </div>
+    </div>
 
-        <!-- Card Usuários -->
-        <div class="col-md-3">
-          <div class="card shadow-sm">
-            <div class="card-body">
-              <h5 class="card-title">Usuários</h5>
-              <p class="card-text text-dark fs-2 fw-bold">
-                0
-              </p>
-            </div>
-          </div>
+    <!-- Card Consultas no Mês -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Consultas no Mês</h5>
+            <p class="card-text text-secondary fs-2 fw-bold">
+            {{ consultasMes }}
+            </p>
         </div>
-      </div>
+        </div>
+    </div>
 
-   <!-- Fila de consultas do dia -->
+    <!-- Card Usuários -->
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Usuários</h5>
+            <p class="card-text text-dark fs-2 fw-bold">
+            0
+            </p>
+        </div>
+        </div>
+    </div>
+    </div>
+
+<!-- Fila de consultas do dia -->
 <div class="d-flex flex-row flex-nowrap overflow-auto mt-4" *ngIf="consultasHojeList.length">
-  <div *ngFor="let consulta of consultasHojeList" class="card shadow-sm m-2" style="min-width: 220px;">
+    <div *ngFor="let consulta of consultasHojeList" class="card shadow-sm m-2" style="min-width: 220px;">
     <div class="card-body">
-      <h5 class="card-title">Dr(a){{ consulta.doutorNome }}</h5>
-      <p class="card-text">
+        <h5 class="card-title">Dr(a){{ consulta.doutorNome }}</h5>
+        <p class="card-text">
         Paciente: {{ consulta.pacienteNome }} <br>
         Horário: {{ consulta.dataHora | date:'HH:mm' }}
-      </p>
+        </p>
     </div>
-  </div>
+    </div>
 </div>
-
-
-
-
-    </main>
-  </div>
 </div>

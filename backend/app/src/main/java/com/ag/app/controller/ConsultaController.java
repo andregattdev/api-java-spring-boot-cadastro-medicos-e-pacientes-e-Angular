@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.security.core.Authentication;
 
 import com.ag.app.dto.consulta.ConsultaCreateDTO;
 import com.ag.app.dto.consulta.ConsultaResponseDTO;
@@ -39,8 +41,12 @@ public class ConsultaController {
 
     // CRUD básico
     @GetMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO')")
-    public List<ConsultaResponseDTO> listarTodas() {
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO') or hasRole('PACIENTE')")
+    public List<ConsultaResponseDTO> listarTodas(Authentication authentication) {
+        boolean isPaciente = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_PACIENTE"));
+        if (isPaciente) {
+            return consultaService.listarPorPacienteEmail(authentication.getName());
+        }
         return consultaService.listarTodas();
     }
 
@@ -51,9 +57,10 @@ public class ConsultaController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO') or hasRole('EMPRESA_CONVENIO')")
-    public ConsultaResponseDTO salvar(@Valid @RequestBody ConsultaCreateDTO consultaCreateDTO) {
-        return consultaService.salvar(consultaCreateDTO);
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO') or hasRole('EMPRESA_CONVENIO') or hasRole('PACIENTE')")
+    public ConsultaResponseDTO salvar(Authentication authentication, @Valid @RequestBody ConsultaCreateDTO consultaCreateDTO) {
+        boolean isPaciente = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_PACIENTE"));
+        return consultaService.salvar(consultaCreateDTO, authentication.getName(), isPaciente);
     }
 
     @PutMapping("/{id}")
@@ -61,6 +68,14 @@ public class ConsultaController {
     public ConsultaResponseDTO atualizar(@PathVariable Long id,
             @Valid @RequestBody ConsultaUpdateDTO consultaUpdateDTO) {
         return consultaService.atualizar(id, consultaUpdateDTO);
+    }
+    
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('PACIENTE')")
+    public org.springframework.http.ResponseEntity<Void> desmarcar(@PathVariable Long id, Authentication authentication) {
+        boolean isPaciente = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_PACIENTE"));
+        consultaService.desmarcar(id, authentication.getName(), isPaciente);
+        return org.springframework.http.ResponseEntity.noContent().build();
     }
 
     // Contagens

@@ -21,11 +21,22 @@ export class AuthGuard implements CanActivate {
       return true; // No servidor (SSR), o localStorage não existe. Deixa passar para carregar o shell da página.
     }
 
-    if (this.authService.isAuthenticated()) {
-      return true;
+    if (!this.authService.isAuthenticated()) {
+      this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+      return false;
+    }
+    
+    // Role based auth
+    const expectedRoles = route.data['roles'] as Array<string>;
+    if (expectedRoles && expectedRoles.length > 0) {
+       const role = this.authService.getTipoUsuario();
+       if (!role || !expectedRoles.includes(role)) {
+          // Acesso negado
+          this.router.navigate(['/dashboard']);
+          return false;
+       }
     }
 
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
-    return false;
+    return true;
   }
 }

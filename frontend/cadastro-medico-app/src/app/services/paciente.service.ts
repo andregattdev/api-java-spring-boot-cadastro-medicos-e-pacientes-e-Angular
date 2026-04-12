@@ -37,4 +37,12 @@ export class PacienteService {
     return this.http.get<number>(`${this.apiUrl}/count`);
   }
 
+  getMeuPerfil(): Observable<PacienteDTO> {
+    return this.http.get<PacienteDTO>(`${this.apiUrl}/me`);
+  }
+
+  atualizarMeuPerfil(paciente: any): Observable<PacienteDTO> {
+    return this.http.put<PacienteDTO>(`${this.apiUrl}/me`, paciente);
+  }
+
 }

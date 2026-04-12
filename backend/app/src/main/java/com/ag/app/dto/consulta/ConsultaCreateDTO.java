@@ -17,7 +17,7 @@ public class ConsultaCreateDTO {
     @NotNull(message = "ID do doutor é obrigatório")
     private Long doutorId;
 
-    @NotNull(message = "ID do paciente é obrigatório")
+    // ID de paciente opcional (será inferido se o usuário for um Paciente)
     private Long pacienteId;
 
     private Long empresaId;

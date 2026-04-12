@@ -1,204 +1,143 @@
 <div class="container mt-4">
-  <div class="row mb-4">
+  <div class="row align-items-center mb-4">
     <div class="col-md-6">
-      <h2>Doutores</h2>
+      <h2 class="display-6 fw-bold m-0" style="color: #2c3e50;">
+        <i class="fas fa-user-md me-2 text-primary"></i> Doutores
+      </h2>
+      <p class="text-muted mt-2">Gerencie os profissionais de saúde</p>
     </div>
-    <div class="col-md-6">
-      <button
-        class="btn btn-primary float-end"
-        (click)="abrirModal()"
-      >
-        <i class="fas fa-plus"></i> Novo Doutor
+    <div class="col-md-6 text-md-end text-start mt-3 mt-md-0" *ngIf="!isPaciente">
+      <button class="btn btn-primary btn-lg rounded-pill px-4 shadow-sm" (click)="abrirModal()">
+        <i class="fas fa-plus-circle me-1"></i> Novo Doutor
       </button>
     </div>
   </div>
 
-  <div *ngIf="carregando" class="spinner-border" role="status">
-    <span class="sr-only">Por favor aguarde...</span>
+  <div *ngIf="carregando" class="text-center my-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Localizando doutores...</span>
+    </div>
   </div>
 
-  <div *ngIf="!carregando && doutores.length === 0" class="alert alert-info">
-    Nenhum doutor registrado. Clique em "Novo Doutor" para adicionar.
-  </div>
+  <ng-container *ngIf="!carregando">
+    <!-- Nenhum doutor -->
+    <div *ngIf="doutores.length === 0" class="alert alert-info border-0 shadow-sm rounded-4 text-center p-5">
+      <i class="fas fa-user-md fa-3x mb-3 text-info"></i>
+      <h4 class="alert-heading">Nenhum Doutor Encontrado</h4>
+      <p class="mb-0">Registre o primeiro médico no sistema clicando em "Novo Doutor".</p>
+    </div>
 
-  <div *ngIf="!carregando && doutores.length > 0" class="table-responsive">
-    <table class="table table-striped table-hover">
-      <thead class="table-dark">
-        <tr>
-          <th>Nome</th>
-          <th>CRM</th>
-          <th>Especialidade</th>
-          <th>Email</th>
-          <th>Telefone</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let doutor of doutores">
-          <td>{{ doutor.nome }}</td>
-          <td>{{ doutor.crm }}</td>
-          <td>{{ doutor.especialidade }}</td>
-          <td>{{ doutor.email }}</td>
-          <td>{{ doutor.telefone }}</td>
-          <td class="d-flex gap-2">
-            <button
-              class="action-btn edit-btn"
-              title="Editar"
-              (click)="abrirModal(doutor)"
-            >
-              <i class="fas fa-edit"></i>
-            </button>
-            <button
-              class="action-btn delete-btn"
-              title="Excluir"
-              (click)="deletarDoutor(doutor.id)"
-            >
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <!-- Lista -->
+    <div *ngIf="doutores.length > 0" class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-4">Nome</th>
+            <th>CRM</th>
+            <th>Especialidade</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th class="text-end pe-4" *ngIf="!isPaciente">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="border-top-0">
+          <tr *ngFor="let doutor of doutores">
+            <td class="ps-4">
+              <div class="d-flex align-items-center">
+                <div class="avatar-circle bg-light text-primary me-3 d-flex align-items-center justify-content-center rounded-circle" style="width: 40px; height: 40px;">
+                  <i class="fas fa-stethoscope p-2"></i>
+                </div>
+                <div>
+                  <h6 class="mb-0 fw-semibold">{{ doutor.nome }}</h6>
+                </div>
+              </div>
+            </td>
+            <td>{{ doutor.crm }}</td>
+            <td><span class="badge bg-light text-dark border rounded-pill">{{ doutor.especialidade }}</span></td>
+            <td>{{ doutor.email }}</td>
+            <td>{{ doutor.telefone }}</td>
+            <td class="text-end pe-4" *ngIf="!isPaciente">
+              <button class="btn btn-sm btn-outline-primary rounded-circle action-btn me-2" title="Editar" (click)="abrirModal(doutor)">
+                <i class="fas fa-pen pt-1"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger rounded-circle action-btn" title="Excluir" (click)="deletarDoutor(doutor.id)">
+                <i class="fas fa-trash-alt pt-1"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
 
   <!-- Modal -->
-  <div
-    class="modal fade"
-    id="doutorModal"
-    tabindex="-1"
-    [class.show]="displayModal"
-    [style.display]="displayModal ? 'block' : 'none'"
-    role="dialog"
-  >
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            {{ editando ? "Editar Doutor" : "Novo Doutor" }}
+  <div class="modal fade" tabindex="-1" [class.show]="displayModal" [style.display]="displayModal ? 'block' : 'none'">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 shadow">
+        <div class="modal-header border-bottom-0 pb-0">
+          <h5 class="modal-title fw-bold">
+            <i class="fas" [ngClass]="editando ? 'fa-edit text-warning' : 'fa-plus-circle text-primary'"></i> 
+            {{ editando ? 'Editar Doutor' : 'Adicionar Doutor' }}
           </h5>
-          <button
-            type="button"
-            class="btn-close"
-            (click)="fecharModal()"
-          ></button>
+          <button type="button" class="btn-close" (click)="fecharModal()"></button>
         </div>
-
+        
         <form [formGroup]="doutorForm" (ngSubmit)="salvarDoutor()">
           <div class="modal-body">
-            <div class="form-outline mb-4">
-              <input
-                type="text"
-                id="nome"
-                class="form-control"
-                formControlName="nome"
-                [class.is-invalid]="f['nome'].touched && f['nome'].errors"
-              />
-              <label class="form-label" for="nome">Nome</label>
-              <div
-                *ngIf="f['nome'].touched && f['nome'].errors"
-                class="invalid-feedback d-block"
-              >
-                <span *ngIf="f['nome'].errors['required']"
-                  >Nome é obrigatório</span
-                >
-                <span *ngIf="f['nome'].errors['minlength']"
-                  >Nome deve ter pelo menos 3 caracteres</span
-                >
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold text-uppercase">Nome</label>
+              <input type="text" formControlName="nome" class="form-control form-control-lg rounded-3" placeholder="Ex: Dr. Roberto Alves">
+              <div *ngIf="f['nome'].touched && f['nome'].errors" class="text-danger small mt-1">
+                <span *ngIf="f['nome'].errors['required']">Nome é obrigatório.</span>
+                <span *ngIf="f['nome'].errors['minlength']">Nome deve ter ao menos 3 caracteres.</span>
               </div>
             </div>
 
-            <div class="form-outline mb-4">
-              <input
-                type="text"
-                id="crm"
-                class="form-control"
-                formControlName="crm"
-                [class.is-invalid]="f['crm'].touched && f['crm'].errors"
-              />
-              <label class="form-label" for="crm">CRM</label>
-              <div
-                *ngIf="f['crm'].touched && f['crm'].errors"
-                class="invalid-feedback d-block"
-              >
-                <span *ngIf="f['crm'].errors['required']">CRM é obrigatório</span>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-muted small fw-semibold text-uppercase">CRM</label>
+                <input type="text" formControlName="crm" class="form-control rounded-3" placeholder="000000-SP">
+                <div *ngIf="f['crm'].touched && f['crm'].errors" class="text-danger small mt-1">
+                  <span *ngIf="f['crm'].errors['required']">CRM é obrigatório.</span>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label text-muted small fw-semibold text-uppercase">Especialidade</label>
+                <select formControlName="especialidade" class="form-select rounded-3">
+                  <option value="">Selecione...</option>
+                  <option *ngFor="let esp of especialidades" [value]="esp">{{ esp.replace('_', ' ') }}</option>
+                </select>
+                <div *ngIf="f['especialidade'].touched && f['especialidade'].errors" class="text-danger small mt-1">
+                  <span *ngIf="f['especialidade'].errors['required']">Especialidade é obrigatória.</span>
+                </div>
               </div>
             </div>
 
-            <div class="form-outline mb-4">
-              <select
-                id="especialidade"
-                class="form-select form-control"
-                formControlName="especialidade"
-                [class.is-invalid]="f['especialidade'].touched && f['especialidade'].errors"
-              >
-                <option value="">Selecione uma especialidade...</option>
-                <option *ngFor="let esp of especialidades" [value]="esp">{{ esp.replace('_', ' ') }}</option>
-              </select>
-              <label class="form-label" for="especialidade">Especialidade</label>
-              <div
-                *ngIf="f['especialidade'].touched && f['especialidade'].errors"
-                class="invalid-feedback d-block"
-              >
-                <span *ngIf="f['especialidade'].errors['required']"
-                  >Especialidade é obrigatória</span
-                >
+            <div class="mb-3">
+              <label class="form-label text-muted small fw-semibold text-uppercase">E-mail</label>
+              <input type="email" formControlName="email" class="form-control rounded-3" placeholder="doutor@clinica.com">
+              <div *ngIf="f['email'].touched && f['email'].errors" class="text-danger small mt-1">
+                <span *ngIf="f['email'].errors['required']">Email é obrigatório.</span>
+                <span *ngIf="f['email'].errors['email']">Formato de email inválido.</span>
               </div>
             </div>
 
-            <div class="form-outline mb-4">
-              <input
-                type="email"
-                id="email"
-                class="form-control"
-                formControlName="email"
-                [class.is-invalid]="f['email'].touched && f['email'].errors"
-              />
-              <label class="form-label" for="email">E-mail</label>
-              <div
-                *ngIf="f['email'].touched && f['email'].errors"
-                class="invalid-feedback d-block"
-              >
-                <span *ngIf="f['email'].errors['required']">Email é obrigatório</span>
-                <span *ngIf="f['email'].errors['email']">O formato do email é inválido</span>
-              </div>
-            </div>
-
-            <div class="form-outline mb-4">
-              <input
-                type="tel"
-                id="telefone"
-                class="form-control"
-                formControlName="telefone"
-              />
-              <label class="form-label" for="telefone">Telefone</label>
+            <div class="mb-3">
+               <label class="form-label text-muted small fw-semibold text-uppercase">Telefone</label>
+               <input type="tel" formControlName="telefone" class="form-control rounded-3" placeholder="(00) 00000-0000">
             </div>
           </div>
 
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              (click)="fecharModal()"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              class="btn btn-primary"
-              [disabled]="doutorForm.invalid"
-            >
-              {{ editando ? "Atualizar" : "Salvar" }}
+          <div class="modal-footer border-top-0 pt-0">
+            <button type="button" class="btn btn-light rounded-pill px-4" (click)="fecharModal()">Cancelar</button>
+            <button type="submit" class="btn btn-primary rounded-pill px-4" [disabled]="doutorForm.invalid">
+              <i class="fas fa-save me-1"></i> Salvar
             </button>
           </div>
         </form>
       </div>
     </div>
   </div>
-
-  <!-- Modal Backdrop -->
-  <div
-    class="modal-backdrop fade"
-    [class.show]="displayModal"
-    [style.display]="displayModal ? 'block' : 'none'"
-  ></div>
+  
+  <div class="modal-backdrop fade" [class.show]="displayModal" [style.display]="displayModal ? 'block' : 'none'"></div>
 </div>

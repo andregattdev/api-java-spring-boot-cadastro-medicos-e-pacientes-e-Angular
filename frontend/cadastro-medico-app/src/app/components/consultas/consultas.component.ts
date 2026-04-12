@@ -7,6 +7,7 @@ import { DoutorService } from '../../services/doutor.service';
 import { PacienteService } from '../../services/paciente.service';
 import { DoutorDTO } from '../../models/doutor.model';
 import { PacienteDTO } from '../../models/paciente.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-consultas',
@@ -23,6 +24,11 @@ export class ConsultasComponent implements OnInit {
   consultaForm: FormGroup;
   editando = false;
   carregando = true;
+  isPaciente = false;
+  
+  perfilIncompleto = false;
+  displayPerfilModal = false;
+  perfilForm: FormGroup;
 
   constructor(
     private consultaService: ConsultaService,
@@ -30,23 +36,50 @@ export class ConsultasComponent implements OnInit {
     private pacienteService: PacienteService,
     private formBuilder: FormBuilder,
     @Inject(PLATFORM_ID) private platformId: Object,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {
+    this.isPaciente = this.authService.isPaciente();
     this.consultaForm = this.formBuilder.group({
       id: [''],
       data: ['', [Validators.required]],
       hora: ['', [Validators.required]],
       doutorId: ['', [Validators.required]],
-      pacienteId: ['', [Validators.required]],
+      pacienteId: [this.isPaciente ? null : '', this.isPaciente ? [] : [Validators.required]],
       observacoes: ['']
+    });
+
+    this.perfilForm = this.formBuilder.group({
+      telefone: ['', [Validators.required, Validators.pattern("\\(?\\d{2}\\)?\\s?\\d{4,5}-?\\d{4}")]],
+      cpf: ['', [Validators.required, Validators.pattern("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")]]
     });
   }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.carregarDados();
+      this.verificarPerfilPaciente();
     } else {
       this.carregando = false;
+    }
+  }
+
+  verificarPerfilPaciente(): void {
+    if (this.isPaciente) {
+      this.pacienteService.getMeuPerfil().subscribe({
+        next: (perfil) => {
+          if (!perfil.cpf || !perfil.telefone) {
+            this.perfilIncompleto = true;
+            this.perfilForm.patchValue({
+               telefone: perfil.telefone || '',
+               cpf: perfil.cpf || ''
+            });
+          } else {
+            this.perfilIncompleto = false;
+          }
+        },
+        error: (err) => console.error('Erro ao verificar perfil', err)
+      });
     }
   }
 
@@ -151,12 +184,14 @@ export class ConsultasComponent implements OnInit {
   }
 
   deletarConsulta(id: number | undefined): void {
-    if (id && confirm('Deseja realmente deletar esta consulta?')) {
+    const confirmMessage = this.isPaciente ? 'Deseja desmarcar esta consulta? Somente é possível realizar isso com até 2h de antecedência.' : 'Deseja realmente deletar esta consulta?';
+    if (id && confirm(confirmMessage)) {
       this.consultaService.deletarConsulta(id).subscribe({
         next: () => {
           this.carregarDados();
         },
         error: (error) => {
+          alert('Erro: ' + (error.error?.message || 'Falha ao deletar/desmarcar consulta.'));
           console.error('Erro ao deletar consulta:', error);
         }
       });
@@ -165,5 +200,38 @@ export class ConsultasComponent implements OnInit {
 
   get f() {
     return this.consultaForm.controls;
+  }
+
+  get pf() {
+    return this.perfilForm.controls;
+  }
+
+  abrirPerfilModal(): void {
+    this.displayPerfilModal = true;
+  }
+  
+  fecharPerfilModal(): void {
+    this.displayPerfilModal = false;
+  }
+
+  salvarPerfil(): void {
+    if (this.perfilForm.invalid) return;
+    
+    this.pacienteService.getMeuPerfil().subscribe(atual => {
+      const payload = {
+        nome: atual.nome,
+        email: atual.email,
+        telefone: this.perfilForm.value.telefone,
+        cpf: this.perfilForm.value.cpf
+      };
+      
+      this.pacienteService.atualizarMeuPerfil(payload).subscribe({
+         next: () => {
+           this.perfilIncompleto = false;
+           this.fecharPerfilModal();
+         },
+         error: (err) => console.error(err)
+      });
+    });
   }
 }

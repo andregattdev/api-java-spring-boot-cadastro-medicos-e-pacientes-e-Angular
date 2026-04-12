@@ -75,7 +75,18 @@ public class ConsultaService {
     }
 
     @Transactional
-    public ConsultaResponseDTO salvar(ConsultaCreateDTO consultaCreateDTO) {
+    public ConsultaResponseDTO salvar(ConsultaCreateDTO consultaCreateDTO, String emailAutor, boolean isPacienteRole) {
+        if (isPacienteRole) {
+            Paciente pacienteAutenticado = pacienteRepository.findByEmail(emailAutor);
+            if (pacienteAutenticado != null) {
+                if (pacienteAutenticado.getCpf() == null || pacienteAutenticado.getCpf().isEmpty() ||
+                    pacienteAutenticado.getTelefone() == null || pacienteAutenticado.getTelefone().isEmpty()) {
+                    throw new IllegalStateException("Para agendar consultas, conclua os dados de CPF e Telefone do seu cadastro!");
+                }
+                consultaCreateDTO.setPacienteId(pacienteAutenticado.getId());
+            }
+        }
+        
         Doutor doutor = doutorRepository.findById(consultaCreateDTO.getDoutorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Doutor", "id", consultaCreateDTO.getDoutorId()));
         Paciente paciente = pacienteRepository.findById(consultaCreateDTO.getPacienteId())
@@ -135,5 +146,34 @@ public class ConsultaService {
         LocalDate start = LocalDate.of(year, month, 1);
         LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
         return listarPorPeriodo(start.atStartOfDay(), end.atTime(23, 59, 59));
+    }
+
+    public List<ConsultaResponseDTO> listarPorPacienteEmail(String email) {
+        Paciente paciente = pacienteRepository.findByEmail(email);
+        if (paciente == null) {
+            throw new ResourceNotFoundException("Paciente", "email", email);
+        }
+        return consultaRepository.findByPacienteId(paciente.getId())
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void desmarcar(Long id, String email, boolean isRolePaciente) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Consulta", "id", id));
+
+        if (isRolePaciente) {
+            Paciente paciente = pacienteRepository.findByEmail(email);
+            if (paciente == null || !consulta.getPaciente().getId().equals(paciente.getId())) {
+                throw new SecurityException("Acesso negado.");
+            }
+            if (LocalDateTime.now().plusHours(2).isAfter(consulta.getDataHora())) {
+                throw new IllegalArgumentException("O cancelamento não é permitido pois falta menos de 2 horas para a consulta.");
+            }
+        }
+
+        consultaRepository.delete(consulta);
     }
 }

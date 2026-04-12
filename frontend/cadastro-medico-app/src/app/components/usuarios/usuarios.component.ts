@@ -27,6 +27,7 @@ export class UsuariosComponent implements OnInit {
       id: [''],
       nome: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
+      senha: ['', [Validators.required, Validators.minLength(6)]],
       tipo: ['', [Validators.required]],
       status: ['', [Validators.required]]
     });
@@ -54,10 +55,14 @@ export class UsuariosComponent implements OnInit {
     if (usuario) {
       this.editando = true;
       this.usuarioForm.patchValue(usuario);
+      this.usuarioForm.get('senha')?.clearValidators();
+      this.usuarioForm.get('senha')?.setValidators([Validators.minLength(6)]);
     } else {
       this.editando = false;
       this.usuarioForm.reset();
+      this.usuarioForm.get('senha')?.setValidators([Validators.required, Validators.minLength(6)]);
     }
+    this.usuarioForm.get('senha')?.updateValueAndValidity();
     this.displayModal = true;
   }
 

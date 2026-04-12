@@ -36,13 +36,13 @@ public class DoutorController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO') or hasRole('PACIENTE')")
     public List<DoutorResponseDTO> listarTodos() {
         return doutorService.listarTodos();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO') or hasRole('PACIENTE')")
     public DoutorResponseDTO verPorId(@PathVariable Long id) {
         return doutorService.verPorId(id);
     }

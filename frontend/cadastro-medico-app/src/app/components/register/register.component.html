@@ -1,0 +1,80 @@
+<div class="container py-5">
+  <div class="row d-flex justify-content-center align-items-center h-100">
+    <div class="col-md-8 col-lg-6 col-xl-5">
+      <div class="card shadow-2-strong rounded-4 border-0">
+        <div class="card-body p-5">
+          <div class="text-center mb-4">
+               <h3 class="fw-bold mb-2">Criar nova conta</h3>
+               <p class="text-muted">Preencha os dados abaixo para se cadastrar.</p>
+          </div>
+
+          <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ error }}
+            <button type="button" class="btn-close" (click)="error = ''" aria-label="Close"></button>
+          </div>
+          
+          <div *ngIf="success" class="alert alert-success border-0 text-center" role="alert">
+            <i class="fas fa-check-circle fa-2x mb-2"></i>
+            <h5 class="alert-heading">Cadastro realizado!</h5>
+            <p class="mb-0">Redirecionando você para o login...</p>
+          </div>
+
+          <form *ngIf="!success" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+            
+            <div class="form-outline mb-4">
+              <label class="form-label text-muted small fw-semibold text-uppercase" for="nome">Nome Completo</label>
+              <input type="text" id="nome" class="form-control form-control-lg rounded-3" formControlName="nome" [class.is-invalid]="submitted && f['nome'].errors" />
+              <div *ngIf="submitted && f['nome'].errors" class="invalid-feedback d-block">
+                <span *ngIf="f['nome'].errors['required']">Nome é obrigatório</span>
+                <span *ngIf="f['nome'].errors['minlength']">Mínimo 3 caracteres</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <label class="form-label text-muted small fw-semibold text-uppercase" for="email">E-mail</label>
+              <input type="email" id="email" class="form-control form-control-lg rounded-3" formControlName="email" [class.is-invalid]="submitted && f['email'].errors" />
+              <div *ngIf="submitted && f['email'].errors" class="invalid-feedback d-block">
+                <span *ngIf="f['email'].errors['required']">Email é obrigatório</span>
+                <span *ngIf="f['email'].errors['email']">Email inválido</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4">
+              <label class="form-label text-muted small fw-semibold text-uppercase" for="senha">Senha</label>
+              <input type="password" id="senha" class="form-control form-control-lg rounded-3" formControlName="senha" [class.is-invalid]="submitted && f['senha'].errors" />
+              <div *ngIf="submitted && f['senha'].errors" class="invalid-feedback d-block">
+                <span *ngIf="f['senha'].errors['required']">Senha é obrigatória</span>
+                <span *ngIf="f['senha'].errors['minlength']">Senha deve ter pelo menos 6 caracteres</span>
+              </div>
+            </div>
+            
+            <div class="form-outline mb-4">
+              <label class="form-label text-muted small fw-semibold text-uppercase" for="tipo">Eu sou um(a):</label>
+              <select id="tipo" class="form-select form-select-lg rounded-3" formControlName="tipo" [class.is-invalid]="submitted && f['tipo'].errors">
+                  <option value="PACIENTE">Paciente</option>
+                  <option value="DOUTOR">Doutor Especialista</option>
+              </select>
+              <div *ngIf="submitted && f['tipo'].errors" class="invalid-feedback d-block">
+                <span *ngIf="f['tipo'].errors['required']">Escolha seu perfil</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg btn-block w-100 rounded-pill shadow-sm" type="submit" [disabled]="loading">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              {{ loading ? "Registrando..." : "Confirmar Cadastro" }}
+            </button>
+          </form>
+
+          <hr class="my-4" />
+
+          <div class="text-center">
+            <p class="text-muted">
+              Já possui conta?
+              <a routerLink="/login" class="fw-bold text-primary text-decoration-none">Voltar pro Login</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

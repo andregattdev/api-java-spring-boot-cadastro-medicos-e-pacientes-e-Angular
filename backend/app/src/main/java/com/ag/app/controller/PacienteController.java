@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
 
 import com.ag.app.dto.paciente.PacienteCreateDTO;
 import com.ag.app.dto.paciente.PacienteResponseDTO;
@@ -39,6 +40,18 @@ public class PacienteController {
     @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO') or hasRole('EMPRESA_CONVENIO')")
     public List<PacienteResponseDTO> listarTodos() {
         return pacienteService.listarTodos();
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('PACIENTE')")
+    public PacienteResponseDTO verMeuPerfil(Authentication authentication) {
+        return pacienteService.verPorEmail(authentication.getName());
+    }
+
+    @PutMapping("/me")
+    @PreAuthorize("hasRole('PACIENTE')")
+    public PacienteResponseDTO atualizarMeuPerfil(Authentication authentication, @Valid @RequestBody PacienteUpdateDTO dto) {
+        return pacienteService.atualizarPorEmail(authentication.getName(), dto);
     }
 
     @GetMapping("/{id}")

@@ -66,6 +66,14 @@ public class PacienteService {
         return toResponseDTO(paciente);
     }
 
+    public PacienteResponseDTO verPorEmail(String email) {
+        Paciente paciente = pacienteRepository.findByEmail(email);
+        if (paciente == null) {
+            throw new ResourceNotFoundException("Paciente", "email", email);
+        }
+        return toResponseDTO(paciente);
+    }
+
     @Transactional
     public PacienteResponseDTO salvar(PacienteCreateDTO pacienteCreateDTO) {
         log.info("Criando novo paciente: {} (CPF: {})", pacienteCreateDTO.getNome(), pacienteCreateDTO.getCpf());
@@ -113,6 +121,25 @@ public class PacienteService {
 
         Paciente atualizado = pacienteRepository.save(paciente);
         log.info("Paciente ID {} atualizado com sucesso", id);
+        return toResponseDTO(atualizado);
+    }
+
+    @Transactional
+    public PacienteResponseDTO atualizarPorEmail(String email, PacienteUpdateDTO dto) {
+        Paciente paciente = pacienteRepository.findByEmail(email);
+        if (paciente == null) {
+            throw new ResourceNotFoundException("Paciente", "email", email);
+        }
+        paciente.setNome(dto.getNome());
+        paciente.setEmail(dto.getEmail());
+        paciente.setTelefone(dto.getTelefone());
+        if (dto.getCpf() != null && !dto.getCpf().isEmpty()) {
+            paciente.setCpf(dto.getCpf());
+        }
+        if (dto.getEmpresaId() != null) {
+            paciente.setEmpresa(empresaRepository.findById(dto.getEmpresaId()).orElse(null));
+        }
+        Paciente atualizado = pacienteRepository.save(paciente);
         return toResponseDTO(atualizado);
     }
 
