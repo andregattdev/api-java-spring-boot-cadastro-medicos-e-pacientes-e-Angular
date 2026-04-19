@@ -73,6 +73,11 @@ public class UsuarioService {
         return usuarios;
     }
 
+    public long count() {
+        log.debug("Contando total de usuários");
+        return usuarioRepository.count();
+    }
+
     public UsuarioResponseDTO verPorId(Long id) {
         log.debug("Buscando usuário com ID: {}", id);
         UsuarioResponseDTO usuario = usuarioRepository.findById(id)

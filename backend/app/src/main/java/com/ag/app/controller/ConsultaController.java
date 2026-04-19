@@ -21,6 +21,7 @@ import org.springframework.security.core.Authentication;
 import com.ag.app.dto.consulta.ConsultaCreateDTO;
 import com.ag.app.dto.consulta.ConsultaResponseDTO;
 import com.ag.app.dto.consulta.ConsultaUpdateDTO;
+import com.ag.app.model.StatusConsulta;
 import com.ag.app.repository.ConsultaRepository;
 import com.ag.app.service.ConsultaService;
 
@@ -68,6 +69,12 @@ public class ConsultaController {
     public ConsultaResponseDTO atualizar(@PathVariable Long id,
             @Valid @RequestBody ConsultaUpdateDTO consultaUpdateDTO) {
         return consultaService.atualizar(id, consultaUpdateDTO);
+    }
+
+    @PutMapping("/{id}/status")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO')")
+    public ConsultaResponseDTO atualizarStatus(@PathVariable Long id, @RequestParam StatusConsulta status) {
+        return consultaService.atualizarStatus(id, status);
     }
     
     @DeleteMapping("/{id}")

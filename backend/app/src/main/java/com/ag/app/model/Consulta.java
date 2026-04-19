@@ -24,6 +24,9 @@ public class Consulta {
 
     private String observacoes;
 
+    @Enumerated(EnumType.STRING)
+    private StatusConsulta status;
+
     public Consulta() {
     }
 
@@ -76,5 +79,13 @@ public class Consulta {
 
     public void setObservacoes(String observacoes) {
         this.observacoes = observacoes;
+    }
+
+    public StatusConsulta getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusConsulta status) {
+        this.status = status;
     }
 }

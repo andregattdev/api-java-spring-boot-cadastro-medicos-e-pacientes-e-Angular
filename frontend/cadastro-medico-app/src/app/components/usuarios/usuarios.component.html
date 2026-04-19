@@ -146,6 +146,17 @@
                 </div>
               </div>
             </div>
+
+            <div class="mb-3" *ngIf="f['tipo'].value === 'FUNCIONARIO'">
+              <label class="form-label text-muted small fw-semibold text-uppercase">Vincular a Empresa</label>
+              <select formControlName="empresaId" class="form-select rounded-3">
+                <option value="" disabled selected>Selecione uma Empresa</option>
+                <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</option>
+              </select>
+              <div *ngIf="f['empresaId'].touched && f['empresaId'].errors" class="text-danger small mt-1">
+                <span *ngIf="f['empresaId'].errors['required']">Empresa é obrigatória para este tipo de usuário.</span>
+              </div>
+            </div>
           </div>
 
           <div class="modal-footer border-top-0 pt-0">

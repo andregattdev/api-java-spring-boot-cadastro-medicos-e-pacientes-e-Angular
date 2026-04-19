@@ -1,0 +1,19 @@
+    # Logs
+*.log
+*.gz
+/backend/app/logs/
+/backend/logs/
+
+# Java / Maven
+target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Node / Angular
+node_modules/
+/dist/
+/.angular/
+
+# IDEs
+.idea/
+.vscode/
+*.swp

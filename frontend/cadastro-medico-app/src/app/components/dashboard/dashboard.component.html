@@ -82,7 +82,7 @@
         <div class="card-body">
             <h5 class="card-title">Usuários</h5>
             <p class="card-text text-dark fs-2 fw-bold">
-            0
+            {{ totalUsuarios$ | async }}
             </p>
         </div>
         </div>
@@ -91,13 +91,30 @@
 
 <!-- Fila de consultas do dia -->
 <div class="d-flex flex-row flex-nowrap overflow-auto mt-4" *ngIf="consultasHojeList.length">
-    <div *ngFor="let consulta of consultasHojeList" class="card shadow-sm m-2" style="min-width: 220px;">
+    <div *ngFor="let consulta of consultasHojeList" 
+         class="card m-2 shadow-sm" 
+         [ngClass]="{'border-success text-muted opacity-75': consulta.status === 'REALIZADA', 'border-danger text-muted opacity-75': consulta.status === 'CANCELADA'}"
+         style="min-width: 220px;">
     <div class="card-body">
-        <h5 class="card-title">Dr(a){{ consulta.doutorNome }}</h5>
+        <h5 class="card-title">
+          <i class="fas fa-check-circle text-success me-1" *ngIf="consulta.status === 'REALIZADA'"></i>
+          <i class="fas fa-times-circle text-danger me-1" *ngIf="consulta.status === 'CANCELADA'"></i>
+          Dr(a){{ consulta.doutorNome }}
+        </h5>
         <p class="card-text">
         Paciente: {{ consulta.pacienteNome }} <br>
         Horário: {{ consulta.dataHora | date:'HH:mm' }}
         </p>
+
+        <div class="mt-2 text-end" *ngIf="!consulta.status || consulta.status === 'PENDENTE'">
+            <button class="btn btn-sm btn-outline-success rounded-pill me-1" title="Marcar como Realizada" (click)="marcarConsulta(consulta, 'REALIZADA')">
+                <i class="fas fa-check"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger rounded-pill" title="Cancelar a Consulta" (click)="marcarConsulta(consulta, 'CANCELADA')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
     </div>
     </div>
 </div>

@@ -46,6 +46,7 @@
             <th class="ps-4">Data e Hora</th>
             <th>Doutor</th>
             <th>Paciente</th>
+            <th>Status</th>
             <th class="text-end pe-4">Ações</th>
           </tr>
         </thead>
@@ -68,12 +69,23 @@
             <td>
               {{ consulta.pacienteNome || '-' }}
             </td>
+            <td>
+              <span class="badge rounded-pill"
+                [class.bg-warning]="!consulta.status || consulta.status === 'PENDENTE'"
+                [class.bg-success]="consulta.status === 'REALIZADA'"
+                [class.bg-secondary]="consulta.status === 'CANCELADA'">
+                {{ consulta.status || 'PENDENTE' }}
+              </span>
+            </td>
             <td class="text-end pe-4">
-              <button *ngIf="!isPaciente" class="btn btn-sm btn-outline-primary rounded-circle action-btn me-2" title="Editar" (click)="abrirModal(consulta)">
+              <button *ngIf="!isPaciente && (!consulta.status || consulta.status === 'PENDENTE')" class="btn btn-sm btn-outline-success rounded-circle action-btn me-2" title="Marcar como Realizada" (click)="marcarStatus(consulta, 'REALIZADA')">
+                <i class="fas fa-check pt-1"></i>
+              </button>
+              <button *ngIf="!isPaciente && (!consulta.status || consulta.status === 'PENDENTE')" class="btn btn-sm btn-outline-primary rounded-circle action-btn me-2" title="Editar" (click)="abrirModal(consulta)">
                 <i class="fas fa-pen pt-1"></i>
               </button>
-              <button class="btn btn-sm btn-outline-danger rounded-circle action-btn" [title]="isPaciente ? 'Desmarcar Consulta' : 'Excluir'" (click)="deletarConsulta(consulta.id)">
-                <i class="fas" [ngClass]="isPaciente ? 'fa-calendar-times' : 'fa-trash-alt'" class="pt-1"></i>
+              <button *ngIf="(!consulta.status || consulta.status === 'PENDENTE')" class="btn btn-sm btn-outline-danger rounded-circle action-btn" [title]="isPaciente ? 'Desmarcar Consulta' : 'Cancelar'" (click)="marcarStatus(consulta, 'CANCELADA')">
+                <i class="fas fa-times pt-1"></i>
               </button>
             </td>
           </tr>

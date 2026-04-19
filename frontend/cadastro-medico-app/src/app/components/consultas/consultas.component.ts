@@ -198,6 +198,19 @@ export class ConsultasComponent implements OnInit {
     }
   }
 
+  marcarStatus(consulta: any, status: string): void {
+    const confirmMsg = status === 'CANCELADA' ? 'Deseja realmente cancelar esta consulta?' : 'Confirmar a presença nesta consulta?';
+    if (confirm(confirmMsg)) {
+      this.consultaService.atualizarStatus(consulta.id, status).subscribe({
+        next: (updated) => {
+          consulta.status = updated.status;
+          this.cdr.detectChanges();
+        },
+        error: (err) => console.error('Erro ao atualizar status:', err)
+      });
+    }
+  }
+
   get f() {
     return this.consultaForm.controls;
   }

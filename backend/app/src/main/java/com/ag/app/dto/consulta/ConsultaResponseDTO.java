@@ -12,12 +12,13 @@ public class ConsultaResponseDTO {
     private Long pacienteId;
     private String pacienteNome;
     private Long empresaId;
+    private String status;
 
     public ConsultaResponseDTO() {
     }
 
     public ConsultaResponseDTO(Long id, LocalDateTime dataHora, String observacoes, Long doutorId,
-                              String doutorNome, Long pacienteId, String pacienteNome, Long empresaId) {
+                              String doutorNome, Long pacienteId, String pacienteNome, Long empresaId, String status) {
         this.id = id;
         this.dataHora = dataHora;
         this.observacoes = observacoes;
@@ -26,6 +27,7 @@ public class ConsultaResponseDTO {
         this.pacienteId = pacienteId;
         this.pacienteNome = pacienteNome;
         this.empresaId = empresaId;
+        this.status = status;
     }
 
     public Long getId() {
@@ -90,5 +92,13 @@ public class ConsultaResponseDTO {
 
     public void setEmpresaId(Long empresaId) {
         this.empresaId = empresaId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

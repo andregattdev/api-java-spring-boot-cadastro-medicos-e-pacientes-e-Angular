@@ -1,3 +1,9 @@
+export enum StatusConsulta {
+  PENDENTE = 'PENDENTE',
+  REALIZADA = 'REALIZADA',
+  CANCELADA = 'CANCELADA'
+}
+
 export interface Consulta {
   id?: number;
   dataHora: string;
@@ -5,6 +11,7 @@ export interface Consulta {
   doutorId: number;
   pacienteId: number;
   empresaId?: number;
+  status?: string;
 }
 
 export interface ConsultaDTO {
@@ -16,4 +23,5 @@ export interface ConsultaDTO {
   pacienteId: number;
   pacienteNome?: string;
   empresaId?: number;
+  status?: string;
 }

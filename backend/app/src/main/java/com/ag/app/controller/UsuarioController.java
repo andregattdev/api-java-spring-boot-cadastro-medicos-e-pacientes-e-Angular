@@ -61,5 +61,11 @@ public class UsuarioController {
     public UsuarioResponseDTO atualizarStatus(@PathVariable Long id, @RequestParam StatusUsuario status) {
         return usuarioService.atualizarStatus(id, status);
     }
+
+    @GetMapping("/count")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public long count() {
+        return usuarioService.count();
+    }
 }
 

@@ -13,6 +13,7 @@ import com.ag.app.dto.consulta.ConsultaResponseDTO;
 import com.ag.app.dto.consulta.ConsultaUpdateDTO;
 import com.ag.app.exception.ResourceNotFoundException;
 import com.ag.app.model.Consulta;
+import com.ag.app.model.StatusConsulta;
 import com.ag.app.model.Doutor;
 import com.ag.app.model.Paciente;
 import com.ag.app.repository.ConsultaRepository;
@@ -43,6 +44,9 @@ public class ConsultaService {
         dto.setId(consulta.getId());
         dto.setDataHora(consulta.getDataHora());
         dto.setObservacoes(consulta.getObservacoes());
+        if (consulta.getStatus() != null) {
+            dto.setStatus(consulta.getStatus().name());
+        }
 
         Doutor doutor = consulta.getDoutor();
         if (doutor != null) {
@@ -97,6 +101,7 @@ public class ConsultaService {
         consulta.setObservacoes(consultaCreateDTO.getObservacoes());
         consulta.setDoutor(doutor);
         consulta.setPaciente(paciente);
+        consulta.setStatus(StatusConsulta.PENDENTE);
 
         Consulta salva = consultaRepository.save(consulta);
         return toResponseDTO(salva);
@@ -117,6 +122,15 @@ public class ConsultaService {
         consulta.setDoutor(doutor);
         consulta.setPaciente(paciente);
 
+        Consulta atualizada = consultaRepository.save(consulta);
+        return toResponseDTO(atualizada);
+    }
+
+    @Transactional
+    public ConsultaResponseDTO atualizarStatus(Long id, StatusConsulta novoStatus) {
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Consulta", "id", id));
+        consulta.setStatus(novoStatus);
         Consulta atualizada = consultaRepository.save(consulta);
         return toResponseDTO(atualizada);
     }
@@ -174,6 +188,7 @@ public class ConsultaService {
             }
         }
 
-        consultaRepository.delete(consulta);
+        consulta.setStatus(StatusConsulta.CANCELADA);
+        consultaRepository.save(consulta);
     }
 }

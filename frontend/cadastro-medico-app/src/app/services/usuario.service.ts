@@ -24,11 +24,15 @@ export class UsuarioService {
     return this.http.get<UsuarioResponseDTO[]>(this.apiUrl);
   }
 
+  getCount(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/count`);
+  }
+
   atualizarUsuario(id: number, usuario: UsuarioCreateDTO): Observable<UsuarioResponseDTO> {
     return this.http.put<UsuarioResponseDTO>(`${this.apiUrl}/${id}`, usuario);
   }
 
-  deletarUsuario(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deletarUsuario(id: number): Observable<UsuarioResponseDTO> {
+    return this.http.put<UsuarioResponseDTO>(`${this.apiUrl}/${id}/status`, null, { params: { status: 'INATIVO' } });
   }
 }

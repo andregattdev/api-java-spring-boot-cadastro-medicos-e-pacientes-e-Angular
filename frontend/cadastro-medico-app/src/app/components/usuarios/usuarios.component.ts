@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UsuarioService } from '../../services/usuario.service';
 import { UsuarioResponseDTO, TipoUsuario } from '../../models/usuario.model';
+import { EmpresaService } from '../../services/empresa.service';
+import { EmpresaDTO } from '../../models/empresa.model';
 
 @Component({
   selector: 'app-usuarios',
@@ -13,6 +15,7 @@ import { UsuarioResponseDTO, TipoUsuario } from '../../models/usuario.model';
 })
 export class UsuariosComponent implements OnInit {
   usuarios: UsuarioResponseDTO[] = [];
+  empresas: EmpresaDTO[] = [];
   displayModal = false;
   usuarioForm: FormGroup;
   editando = false;
@@ -21,6 +24,7 @@ export class UsuariosComponent implements OnInit {
 
   constructor(
     private usuarioService: UsuarioService,
+    private empresaService: EmpresaService,
     private formBuilder: FormBuilder
   ) {
     this.usuarioForm = this.formBuilder.group({
@@ -29,12 +33,31 @@ export class UsuariosComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]],
       tipo: ['', [Validators.required]],
-      status: ['', [Validators.required]]
+      status: ['', [Validators.required]],
+      empresaId: ['']
+    });
+
+    this.usuarioForm.get('tipo')?.valueChanges.subscribe(tipo => {
+      const empresaControl = this.usuarioForm.get('empresaId');
+      if (tipo === 'FUNCIONARIO') {
+        empresaControl?.setValidators([Validators.required]);
+      } else {
+        empresaControl?.clearValidators();
+      }
+      empresaControl?.updateValueAndValidity();
     });
   }
 
   ngOnInit(): void {
     this.carregarUsuarios();
+    this.carregarEmpresas();
+  }
+
+  carregarEmpresas(): void {
+    this.empresaService.listarTodas().subscribe({
+      next: (data) => this.empresas = data,
+      error: (err) => console.error('Erro ao carregar empresas:', err)
+    });
   }
 
   carregarUsuarios(): void {

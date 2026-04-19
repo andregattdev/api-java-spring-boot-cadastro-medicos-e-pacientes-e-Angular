@@ -62,4 +62,8 @@ export class ConsultaService {
     return this.http.get<any[]>(`${this.apiUrl}/day/${date}/list`);
   }
 
+  atualizarStatus(id: number, status: string): Observable<ConsultaDTO> {
+    return this.http.put<ConsultaDTO>(`${this.apiUrl}/${id}/status`, null, { params: { status } });
+  }
+
 }
