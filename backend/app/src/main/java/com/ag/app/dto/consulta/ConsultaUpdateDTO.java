@@ -20,6 +20,8 @@ public class ConsultaUpdateDTO {
     @NotNull(message = "ID do paciente é obrigatório")
     private Long pacienteId;
 
+    private String tipoConsulta;
+    private String tipoExameOcupacional;
     public LocalDateTime getDataHora() {
         return dataHora;
     }
@@ -50,5 +52,21 @@ public class ConsultaUpdateDTO {
 
     public void setPacienteId(Long pacienteId) {
         this.pacienteId = pacienteId;
+    }
+
+    public String getTipoConsulta() {
+        return tipoConsulta;
+    }
+
+    public void setTipoConsulta(String tipoConsulta) {
+        this.tipoConsulta = tipoConsulta;
+    }
+
+    public String getTipoExameOcupacional() {
+        return tipoExameOcupacional;
+    }
+
+    public void setTipoExameOcupacional(String tipoExameOcupacional) {
+        this.tipoExameOcupacional = tipoExameOcupacional;
     }
 }

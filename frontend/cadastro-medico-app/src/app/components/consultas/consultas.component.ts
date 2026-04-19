@@ -42,6 +42,8 @@ export class ConsultasComponent implements OnInit {
     this.isPaciente = this.authService.isPaciente();
     this.consultaForm = this.formBuilder.group({
       id: [''],
+      tipoConsulta: ['CLINICA', [Validators.required]],
+      tipoExameOcupacional: ['NENHUM'],
       data: ['', [Validators.required]],
       hora: ['', [Validators.required]],
       doutorId: ['', [Validators.required]],
@@ -128,6 +130,8 @@ export class ConsultasComponent implements OnInit {
       }
       this.consultaForm.patchValue({
         id: consulta.id,
+        tipoConsulta: consulta.tipoConsulta || 'CLINICA',
+        tipoExameOcupacional: consulta.tipoExameOcupacional || 'NENHUM',
         data: d,
         hora: h,
         doutorId: consulta.doutorId,
@@ -154,6 +158,8 @@ export class ConsultasComponent implements OnInit {
     const raw = this.consultaForm.value;
     const consultaParaSalvar: any = {
       id: raw.id,
+      tipoConsulta: raw.tipoConsulta,
+      tipoExameOcupacional: raw.tipoConsulta === 'OCUPACIONAL' ? raw.tipoExameOcupacional : 'NENHUM',
       doutorId: raw.doutorId,
       pacienteId: raw.pacienteId,
       observacoes: raw.observacoes,

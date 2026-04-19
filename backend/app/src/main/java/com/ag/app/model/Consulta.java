@@ -27,6 +27,12 @@ public class Consulta {
     @Enumerated(EnumType.STRING)
     private StatusConsulta status;
 
+    @Enumerated(EnumType.STRING)
+    private TipoConsulta tipoConsulta = TipoConsulta.CLINICA;
+
+    @Enumerated(EnumType.STRING)
+    private TipoExameOcupacional tipoExameOcupacional = TipoExameOcupacional.NENHUM;
+
     public Consulta() {
     }
 
@@ -87,5 +93,21 @@ public class Consulta {
 
     public void setStatus(StatusConsulta status) {
         this.status = status;
+    }
+
+    public TipoConsulta getTipoConsulta() {
+        return tipoConsulta;
+    }
+
+    public void setTipoConsulta(TipoConsulta tipoConsulta) {
+        this.tipoConsulta = tipoConsulta;
+    }
+
+    public TipoExameOcupacional getTipoExameOcupacional() {
+        return tipoExameOcupacional;
+    }
+
+    public void setTipoExameOcupacional(TipoExameOcupacional tipoExameOcupacional) {
+        this.tipoExameOcupacional = tipoExameOcupacional;
     }
 }

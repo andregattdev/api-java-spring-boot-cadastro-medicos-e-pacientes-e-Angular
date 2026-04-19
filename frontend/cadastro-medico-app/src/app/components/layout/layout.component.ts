@@ -14,6 +14,7 @@ export class LayoutComponent {
   sidebarOpen = true;
   isAdmin = false;
   isPaciente = false;
+  isMedico = false;
 
   constructor(
     private authService: AuthService,
@@ -21,6 +22,7 @@ export class LayoutComponent {
   ) {
     this.isAdmin = this.authService.isAdmin();
     this.isPaciente = this.authService.isPaciente();
+    this.isMedico = this.authService.isMedico();
   }
 
   toggleSidebar(): void {

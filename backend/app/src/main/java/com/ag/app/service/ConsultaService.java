@@ -20,6 +20,9 @@ import com.ag.app.repository.ConsultaRepository;
 import com.ag.app.repository.DoutorRepository;
 import com.ag.app.repository.PacienteRepository;
 
+import com.ag.app.model.TipoConsulta;
+import com.ag.app.model.TipoExameOcupacional;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -46,6 +49,12 @@ public class ConsultaService {
         dto.setObservacoes(consulta.getObservacoes());
         if (consulta.getStatus() != null) {
             dto.setStatus(consulta.getStatus().name());
+        }
+        if (consulta.getTipoConsulta() != null) {
+            dto.setTipoConsulta(consulta.getTipoConsulta().name());
+        }
+        if (consulta.getTipoExameOcupacional() != null) {
+            dto.setTipoExameOcupacional(consulta.getTipoExameOcupacional().name());
         }
 
         Doutor doutor = consulta.getDoutor();
@@ -103,6 +112,13 @@ public class ConsultaService {
         consulta.setPaciente(paciente);
         consulta.setStatus(StatusConsulta.PENDENTE);
 
+        if (consultaCreateDTO.getTipoConsulta() != null && !consultaCreateDTO.getTipoConsulta().trim().isEmpty()) {
+            consulta.setTipoConsulta(TipoConsulta.valueOf(consultaCreateDTO.getTipoConsulta()));
+        }
+        if (consultaCreateDTO.getTipoExameOcupacional() != null && !consultaCreateDTO.getTipoExameOcupacional().trim().isEmpty()) {
+            consulta.setTipoExameOcupacional(TipoExameOcupacional.valueOf(consultaCreateDTO.getTipoExameOcupacional()));
+        }
+
         Consulta salva = consultaRepository.save(consulta);
         return toResponseDTO(salva);
     }
@@ -121,6 +137,13 @@ public class ConsultaService {
         consulta.setObservacoes(consultaUpdateDTO.getObservacoes());
         consulta.setDoutor(doutor);
         consulta.setPaciente(paciente);
+        
+        if (consultaUpdateDTO.getTipoConsulta() != null && !consultaUpdateDTO.getTipoConsulta().trim().isEmpty()) {
+            consulta.setTipoConsulta(TipoConsulta.valueOf(consultaUpdateDTO.getTipoConsulta()));
+        }
+        if (consultaUpdateDTO.getTipoExameOcupacional() != null && !consultaUpdateDTO.getTipoExameOcupacional().trim().isEmpty()) {
+            consulta.setTipoExameOcupacional(TipoExameOcupacional.valueOf(consultaUpdateDTO.getTipoExameOcupacional()));
+        }
 
         Consulta atualizada = consultaRepository.save(consulta);
         return toResponseDTO(atualizada);
@@ -168,6 +191,28 @@ public class ConsultaService {
             throw new ResourceNotFoundException("Paciente", "email", email);
         }
         return consultaRepository.findByPacienteId(paciente.getId())
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ConsultaResponseDTO> listarPorDoutorEmail(String email) {
+        Doutor doutor = doutorRepository.findByEmail(email);
+        if (doutor == null) {
+            throw new ResourceNotFoundException("Doutor", "email", email);
+        }
+        return consultaRepository.findByDoutorId(doutor.getId())
+                .stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<ConsultaResponseDTO> listarPorDoutorEmailEPeriodo(String email, LocalDateTime inicio, LocalDateTime fim) {
+        Doutor doutor = doutorRepository.findByEmail(email);
+        if (doutor == null) {
+            throw new ResourceNotFoundException("Doutor", "email", email);
+        }
+        return consultaRepository.findByDoutorIdAndDataHoraBetweenOrderByDataHoraAsc(doutor.getId(), inicio, fim)
                 .stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());

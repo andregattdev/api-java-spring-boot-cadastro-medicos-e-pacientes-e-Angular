@@ -23,6 +23,7 @@ export class DashboardComponent implements OnInit {
   totalPacientes$: Observable<number>;
   totalConsultas$: Observable<number>;
   totalUsuarios$: Observable<number>;
+  isAdmin = false;
 
   consultasHojeCount = 0;
   consultasSemana = 0;
@@ -38,6 +39,8 @@ export class DashboardComponent implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {
+    this.isAdmin = this.authService.isAdmin();
+    
     if (this.authService.isPaciente()) {
       this.totalDoutores$ = of(0);
       this.totalPacientes$ = of(0);

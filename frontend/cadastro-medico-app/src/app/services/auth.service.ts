@@ -81,4 +81,8 @@ export class AuthService {
   isPaciente(): boolean {
     return this.getTipoUsuario() === 'PACIENTE';
   }
+
+  isMedico(): boolean {
+    return this.getTipoUsuario() === 'MEDICO';
+  }
 }

@@ -22,6 +22,8 @@ public class ConsultaCreateDTO {
 
     private Long empresaId;
 
+    private String tipoConsulta;
+    private String tipoExameOcupacional;
     public LocalDateTime getDataHora() {
         return dataHora;
     }
@@ -60,5 +62,21 @@ public class ConsultaCreateDTO {
 
     public void setEmpresaId(Long empresaId) {
         this.empresaId = empresaId;
+    }
+
+    public String getTipoConsulta() {
+        return tipoConsulta;
+    }
+
+    public void setTipoConsulta(String tipoConsulta) {
+        this.tipoConsulta = tipoConsulta;
+    }
+
+    public String getTipoExameOcupacional() {
+        return tipoExameOcupacional;
+    }
+
+    public void setTipoExameOcupacional(String tipoExameOcupacional) {
+        this.tipoExameOcupacional = tipoExameOcupacional;
     }
 }

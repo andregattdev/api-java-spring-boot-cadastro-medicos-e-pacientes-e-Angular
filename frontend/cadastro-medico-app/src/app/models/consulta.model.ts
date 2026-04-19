@@ -12,6 +12,8 @@ export interface Consulta {
   pacienteId: number;
   empresaId?: number;
   status?: string;
+  tipoConsulta?: string;
+  tipoExameOcupacional?: string;
 }
 
 export interface ConsultaDTO {
@@ -24,4 +26,6 @@ export interface ConsultaDTO {
   pacienteNome?: string;
   empresaId?: number;
   status?: string;
+  tipoConsulta?: string;
+  tipoExameOcupacional?: string;
 }

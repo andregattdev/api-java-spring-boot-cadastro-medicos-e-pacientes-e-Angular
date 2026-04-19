@@ -45,8 +45,13 @@ public class ConsultaController {
     @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO') or hasRole('MEDICO') or hasRole('PACIENTE')")
     public List<ConsultaResponseDTO> listarTodas(Authentication authentication) {
         boolean isPaciente = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_PACIENTE"));
+        boolean isMedico = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MEDICO"));
+        
         if (isPaciente) {
             return consultaService.listarPorPacienteEmail(authentication.getName());
+        }
+        if (isMedico) {
+            return consultaService.listarPorDoutorEmail(authentication.getName());
         }
         return consultaService.listarTodas();
     }
@@ -113,18 +118,22 @@ public class ConsultaController {
 
     @GetMapping("/day/{date}")
     public List<ConsultaResponseDTO> consultasDoDia(
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Authentication authentication) {
         LocalDateTime start = date.atStartOfDay();
         LocalDateTime end = date.atTime(23, 59, 59);
-        return consultaService.listarPorPeriodo(start, end); // retorna DTOs já ordenados
+
+        boolean isMedico = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_MEDICO"));
+        if (isMedico) {
+             return consultaService.listarPorDoutorEmailEPeriodo(authentication.getName(), start, end);
+        }
+
+        return consultaService.listarPorPeriodo(start, end);
     }
 
     @GetMapping("/day/{date}/list")
     public List<ConsultaResponseDTO> consultasDoDiaList(
-            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        LocalDateTime start = date.atStartOfDay();
-        LocalDateTime end = date.atTime(23, 59, 59);
-        return consultaService.listarPorPeriodo(start, end);
+            @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date, Authentication authentication) {
+        return consultasDoDia(date, authentication);
     }
 
 }

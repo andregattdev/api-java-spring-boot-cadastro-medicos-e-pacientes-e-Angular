@@ -8,6 +8,10 @@ import com.ag.app.model.Doutor;
 import com.ag.app.model.EspecialidadeMedica;
 import com.ag.app.model.StatusUsuario;
 import com.ag.app.repository.DoutorRepository;
+import com.ag.app.model.Usuario;
+import com.ag.app.model.TipoUsuario;
+import com.ag.app.repository.UsuarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,9 +24,13 @@ import java.util.stream.Collectors;
 public class DoutorService {
 
     private final DoutorRepository doutorRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public DoutorService(DoutorRepository doutorRepository) {
+    public DoutorService(DoutorRepository doutorRepository, UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.doutorRepository = doutorRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // Converte entidade -> ResponseDTO
@@ -80,6 +88,20 @@ public class DoutorService {
             doutor.setCrm(doutorCreateDTO.getCrm());
             doutor.setEspecialidade(EspecialidadeMedica.valueOf(doutorCreateDTO.getEspecialidade().toUpperCase()));
             doutor.setStatus(StatusUsuario.ATIVO);
+
+            if (usuarioRepository.findByEmail(doutor.getEmail()) != null) {
+                throw new IllegalArgumentException("Email já cadastrado: " + doutor.getEmail());
+            }
+
+            Usuario usuario = new Usuario();
+            usuario.setNome(doutor.getNome());
+            usuario.setEmail(doutor.getEmail());
+            usuario.setSenha(passwordEncoder.encode(doutor.getCrm()));
+            usuario.setTipo(TipoUsuario.MEDICO);
+            usuario.setStatus(StatusUsuario.ATIVO);
+            
+            usuario = usuarioRepository.save(usuario);
+            doutor.setUsuario(usuario);
 
             log.debug("Doutor criado com CRM: {}", doutor.getCrm());
             Doutor salvo = doutorRepository.save(doutor);

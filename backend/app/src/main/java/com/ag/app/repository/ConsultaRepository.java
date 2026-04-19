@@ -15,6 +15,9 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long> {
 
     // Buscar consultas entre dois horários
     List<Consulta> findByDataHoraBetween(LocalDateTime inicio, LocalDateTime fim);
+    
+
+    List<Consulta> findByDoutorIdAndDataHoraBetweenOrderByDataHoraAsc(Long doutorId, LocalDateTime inicio, LocalDateTime fim);
 
     // Contagem total
     long count();

@@ -13,12 +13,15 @@ public class ConsultaResponseDTO {
     private String pacienteNome;
     private Long empresaId;
     private String status;
+    private String tipoConsulta;
+    private String tipoExameOcupacional;
 
     public ConsultaResponseDTO() {
     }
 
     public ConsultaResponseDTO(Long id, LocalDateTime dataHora, String observacoes, Long doutorId,
-                              String doutorNome, Long pacienteId, String pacienteNome, Long empresaId, String status) {
+                              String doutorNome, Long pacienteId, String pacienteNome, Long empresaId, String status,
+                              String tipoConsulta, String tipoExameOcupacional) {
         this.id = id;
         this.dataHora = dataHora;
         this.observacoes = observacoes;
@@ -28,6 +31,8 @@ public class ConsultaResponseDTO {
         this.pacienteNome = pacienteNome;
         this.empresaId = empresaId;
         this.status = status;
+        this.tipoConsulta = tipoConsulta;
+        this.tipoExameOcupacional = tipoExameOcupacional;
     }
 
     public Long getId() {
@@ -100,5 +105,21 @@ public class ConsultaResponseDTO {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getTipoConsulta() {
+        return tipoConsulta;
+    }
+
+    public void setTipoConsulta(String tipoConsulta) {
+        this.tipoConsulta = tipoConsulta;
+    }
+
+    public String getTipoExameOcupacional() {
+        return tipoExameOcupacional;
+    }
+
+    public void setTipoExameOcupacional(String tipoExameOcupacional) {
+        this.tipoExameOcupacional = tipoExameOcupacional;
     }
 }

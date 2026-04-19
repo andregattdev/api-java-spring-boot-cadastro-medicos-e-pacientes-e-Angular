@@ -4,7 +4,7 @@ Este projeto é uma plataforma Fullstack robusta e moderna voltada para o mercad
 
 ---
 
-## 🚀 Principais Funcionalidades Adicionadas
+## Principais Funcionalidades Adicionadas
 Este não é apenas um sistema de agendamento visual, mas carrega extensas lógicas de negócio por debaixo dos panos:
 
 - **Sistema B2B Integrado (Multi-Tenant):** Cadastro de Empresas parceiras. Funcionários registrados no sistema precisam pertencer obrigatoriamente a uma dessas empresas, e os acessos ficam encapsulados respeitando essa hierarquia.
@@ -19,7 +19,7 @@ Este não é apenas um sistema de agendamento visual, mas carrega extensas lógi
 
 ---
 
-## 🛠 Tecnologias Utilizadas no Ecossistema
+## Tecnologias Utilizadas no Ecossistema
 
 As escolhas arquiteturais simulam uma aplicação profissional apta para ser lançada em mercado.
 
@@ -38,7 +38,7 @@ As escolhas arquiteturais simulam uma aplicação profissional apta para ser lan
 
 ---
 
-## 💻 Como Executar o Projeto Localmente
+## Como Executar o Projeto Localmente
 
 Ideal para Headhunters, Tech Recruiters ou pares de desenvolvimento verificarem e testarem a aplicação rodando de fato:
 
@@ -60,7 +60,7 @@ Ideal para Headhunters, Tech Recruiters ou pares de desenvolvimento verificarem 
 
 ---
 
-## 🔑 Acesso Rápido para Avaliação (Master Root)
+## Acesso Rápido para Avaliação (Master Root)
 
 Um dos maiores problemas para quem avaia um sistema de controle de acesso é ter que cavar nos códigos ou "chutar" qual a porta de entrada. 
 Isso foi abstraído aqui com um *Database Seeding Inicializador*. Uma semente (Usuário Master) se cria dinamicamente logo no milissegundo de carregamento número 1 da API para você explorar a ferramenta.
