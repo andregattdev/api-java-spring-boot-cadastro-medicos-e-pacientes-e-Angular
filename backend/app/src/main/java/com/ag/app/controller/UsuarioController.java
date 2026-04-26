@@ -63,7 +63,7 @@ public class UsuarioController {
     }
 
     @GetMapping("/count")
-    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO')")
     public long count() {
         return usuarioService.count();
     }

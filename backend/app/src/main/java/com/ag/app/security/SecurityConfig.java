@@ -37,10 +37,17 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                // Permite preflight CORS
+                .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
+                // Auth endpoints
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/usuarios").permitAll()
-                .requestMatchers("/api/empresas").permitAll()
-                .anyRequest().authenticated()
+                // Cadastro público precisa listar empresas
+                .requestMatchers("/api/empresas/public").permitAll()
+                // Actuator (básico) - útil para healthcheck local/infra
+                .requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/info").permitAll()
+                // Todo o resto exige autenticação; regras finas ficam no @PreAuthorize
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().permitAll()
             );
 
         http.authenticationProvider(authenticationProvider());

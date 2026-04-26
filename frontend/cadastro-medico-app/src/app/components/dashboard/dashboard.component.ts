@@ -9,6 +9,8 @@ import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { StatusConsulta } from '../../models/consulta.model';
+import { isPlatformBrowser } from '@angular/common';
+import { Inject, PLATFORM_ID } from '@angular/core';
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +25,7 @@ export class DashboardComponent implements OnInit {
   totalPacientes$: Observable<number>;
   totalConsultas$: Observable<number>;
   totalUsuarios$: Observable<number>;
-  isAdmin = false;
+  isStaff = false;
 
   consultasHojeCount = 0;
   consultasSemana = 0;
@@ -37,9 +39,10 @@ export class DashboardComponent implements OnInit {
     private consultaService: ConsultaService,
     private usuarioService: UsuarioService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    this.isAdmin = this.authService.isAdmin();
+    this.isStaff = this.authService.isStaff();
     
     if (this.authService.isPaciente()) {
       this.totalDoutores$ = of(0);
@@ -50,10 +53,17 @@ export class DashboardComponent implements OnInit {
       return;
     }
     
-    this.totalDoutores$ = this.doutorService.getCount();
-    this.totalPacientes$ = this.pacienteService.getCount();
-    this.totalConsultas$ = this.consultaService.getCount();
-    this.totalUsuarios$ = this.usuarioService.getCount();
+    if (isPlatformBrowser(this.platformId) && this.isStaff) {
+      this.totalDoutores$ = this.doutorService.getCount();
+      this.totalPacientes$ = this.pacienteService.getCount();
+      this.totalConsultas$ = this.consultaService.getCount();
+      this.totalUsuarios$ = this.usuarioService.getCount();
+    } else {
+      this.totalDoutores$ = of(0);
+      this.totalPacientes$ = of(0);
+      this.totalConsultas$ = of(0);
+      this.totalUsuarios$ = of(0);
+    }
   }
 
   ngOnInit(): void {
@@ -61,23 +71,33 @@ export class DashboardComponent implements OnInit {
       return;
     }
 
-    const today = new Date().toISOString().split('T')[0];
+    if (isPlatformBrowser(this.platformId)) {
+      const today = new Date().toISOString().split('T')[0];
 
-    this.consultaService.getCountByDay(today).subscribe(count => {
-      this.consultasHojeCount = count;
-    });
+      if (this.isStaff) {
+        this.consultaService.getCountByDay(today).subscribe({
+          next: count => this.consultasHojeCount = count,
+          error: err => console.error('Erro getCountByDay', err)
+        });
 
-    this.consultaService.getConsultasDoDia(today).subscribe(lista => {
-      this.consultasHojeList = lista;
-    });
+        this.consultaService.getCountByWeek('2026-04-01', '2026-04-07').subscribe({
+          next: count => this.consultasSemana = count,
+          error: err => console.error('Erro getCountByWeek', err)
+        });
 
-    this.consultaService.getCountByWeek('2026-04-01', '2026-04-07').subscribe(count => {
-      this.consultasSemana = count;
-    });
+        this.consultaService.getCountByMonth(2026, 4).subscribe({
+          next: count => this.consultasMes = count,
+          error: err => console.error('Erro getCountByMonth', err)
+        });
+      }
 
-    this.consultaService.getCountByMonth(2026, 4).subscribe(count => {
-      this.consultasMes = count;
-    });
+      this.consultaService.getConsultasDoDia(today).subscribe({
+        next: lista => {
+          this.consultasHojeList = lista;
+        },
+        error: err => console.error('Erro ao buscar consultas do dia', err)
+      });
+    }
   }
 
   marcarConsulta(consulta: any, status: string): void {

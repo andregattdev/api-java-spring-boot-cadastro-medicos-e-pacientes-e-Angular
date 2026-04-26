@@ -29,7 +29,12 @@ export const routes: Routes = [
           canActivate: [AuthGuard],
           data: { roles: ['FUNCIONARIO', 'ADMINISTRADOR'] } 
       },
-      { path: 'empresas', component: EmpresasComponent }
+      {
+        path: 'empresas',
+        component: EmpresasComponent,
+        canActivate: [AuthGuard],
+        data: { roles: ['FUNCIONARIO', 'ADMINISTRADOR'] }
+      }
     ]
   },
   { path: '**', redirectTo: '/login' }

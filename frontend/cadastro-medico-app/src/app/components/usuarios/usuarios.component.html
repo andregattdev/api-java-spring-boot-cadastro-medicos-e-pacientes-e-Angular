@@ -53,18 +53,12 @@
             </td>
             <td>{{ usuario.email }}</td>
             <td>
-              <span class="badge rounded-pill"
-                [class.bg-primary]="usuario.tipo === 'DOUTOR'"
-                [class.bg-info]="usuario.tipo === 'PACIENTE'"
-                [class.bg-warning]="usuario.tipo === 'FUNCIONARIO'"
-                [class.bg-secondary]="usuario.tipo === 'PARTICULAR'">
-                {{ usuario.tipo }}
+              <span class="badge rounded-pill" [ngClass]="getTipoBadgeClass(usuario.tipo)">
+                {{ getTipoLabel(usuario.tipo) }}
               </span>
             </td>
             <td>
-              <span class="badge rounded-pill"
-                [class.bg-success]="usuario.status === 'ATIVO'"
-                [class.bg-danger]="usuario.status === 'INATIVO'">
+              <span class="badge rounded-pill" [ngClass]="getStatusBadgeClass(usuario.status)">
                 {{ usuario.status }}
               </span>
             </td>
@@ -128,21 +122,10 @@
                 <label class="form-label text-muted small fw-semibold text-uppercase">Tipo</label>
                 <select formControlName="tipo" class="form-select rounded-3">
                   <option value="">Selecione...</option>
-                  <option *ngFor="let tipo of tiposUsuario" [value]="tipo">{{ tipo }}</option>
+                  <option *ngFor="let tipo of tiposUsuario" [value]="tipo">{{ getTipoLabel(tipo) }}</option>
                 </select>
                 <div *ngIf="f['tipo'].touched && f['tipo'].errors" class="text-danger small mt-1">
                   <span *ngIf="f['tipo'].errors['required']">Tipo é obrigatório.</span>
-                </div>
-              </div>
-              <div class="col-md-6 mb-3">
-                <label class="form-label text-muted small fw-semibold text-uppercase">Status</label>
-                <select formControlName="status" class="form-select rounded-3">
-                  <option value="">Selecione...</option>
-                  <option value="ATIVO">Ativo</option>
-                  <option value="INATIVO">Inativo</option>
-                </select>
-                <div *ngIf="f['status'].touched && f['status'].errors" class="text-danger small mt-1">
-                  <span *ngIf="f['status'].errors['required']">Status é obrigatório.</span>
                 </div>
               </div>
             </div>

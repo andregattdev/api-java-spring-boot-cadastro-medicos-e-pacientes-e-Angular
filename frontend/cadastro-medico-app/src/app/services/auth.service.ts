@@ -74,8 +74,20 @@ export class AuthService {
   }
   
   isAdmin(): boolean {
+    return this.getTipoUsuario() === 'ADMINISTRADOR';
+  }
+
+  isFuncionario(): boolean {
+    return this.getTipoUsuario() === 'FUNCIONARIO';
+  }
+
+  /**
+   * "Staff" do sistema: perfis que operam a clínica (admin/funcionário).
+   * Mantém a semântica antiga do front (antes `isAdmin()` também incluía FUNCIONARIO).
+   */
+  isStaff(): boolean {
     const tipo = this.getTipoUsuario();
-    return tipo === 'FUNCIONARIO' || tipo === 'ADMINISTRADOR';
+    return tipo === 'ADMINISTRADOR' || tipo === 'FUNCIONARIO';
   }
 
   isPaciente(): boolean {

@@ -20,7 +20,14 @@ export class UsuariosComponent implements OnInit {
   usuarioForm: FormGroup;
   editando = false;
   carregando = false;
-  tiposUsuario = Object.values(TipoUsuario);
+  tiposUsuario = [
+    TipoUsuario.PACIENTE,
+    TipoUsuario.MEDICO,
+    TipoUsuario.FUNCIONARIO,
+    TipoUsuario.EMPRESA_CONVENIO,
+    TipoUsuario.PARTICULAR,
+    TipoUsuario.ADMINISTRADOR
+  ];
 
   constructor(
     private usuarioService: UsuarioService,
@@ -33,7 +40,6 @@ export class UsuariosComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]],
       tipo: ['', [Validators.required]],
-      status: ['', [Validators.required]],
       empresaId: ['']
     });
 
@@ -139,5 +145,56 @@ export class UsuariosComponent implements OnInit {
 
   get f() {
     return this.usuarioForm.controls;
+  }
+
+  getTipoLabel(tipo: string | null | undefined): string {
+    switch (tipo) {
+      case 'ADMINISTRADOR':
+        return 'Administrador';
+      case 'FUNCIONARIO':
+        return 'Secretaria';
+      case 'MEDICO':
+        return 'Especialista';
+      case 'PACIENTE':
+        return 'Paciente';
+      case 'EMPRESA_CONVENIO':
+        return 'Empresa/Convênio';
+      case 'PARTICULAR':
+        return 'Particular';
+      default:
+        return tipo ?? '';
+    }
+  }
+
+  getTipoBadgeClass(tipo: string | null | undefined): string {
+    switch (tipo) {
+      case 'ADMINISTRADOR':
+        return 'bg-dark';
+      case 'FUNCIONARIO':
+        return 'bg-warning';
+      case 'MEDICO':
+        return 'bg-primary';
+      case 'PACIENTE':
+        return 'bg-info';
+      case 'EMPRESA_CONVENIO':
+        return 'bg-success';
+      case 'PARTICULAR':
+        return 'bg-secondary';
+      default:
+        return 'bg-light text-dark';
+    }
+  }
+
+  getStatusBadgeClass(status: string | null | undefined): string {
+    switch (status) {
+      case 'ATIVO':
+        return 'bg-success';
+      case 'INATIVO':
+        return 'bg-danger';
+      case 'BLOQUEADO':
+        return 'bg-warning text-dark';
+      default:
+        return 'bg-light text-dark';
+    }
   }
 }

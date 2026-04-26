@@ -16,6 +16,9 @@ dist/
 
 # Logs
 *.log
+logs/
+backend/app/logs/
+*.gz
 
 # Temporários
 *.tmp

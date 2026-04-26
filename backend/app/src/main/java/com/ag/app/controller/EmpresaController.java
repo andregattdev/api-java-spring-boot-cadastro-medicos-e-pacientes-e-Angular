@@ -42,6 +42,15 @@ public class EmpresaController {
         return empresaService.listarTodas();
     }
 
+    /**
+     * Endpoint público mínimo para cadastro (register) conseguir listar empresas.
+     * Mantém o restante do CRUD protegido por roles.
+     */
+    @GetMapping("/public")
+    public List<EmpresaResponseDTO> listarPublico() {
+        return empresaService.listarTodas();
+    }
+
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO')")
     public EmpresaResponseDTO verPorId(@PathVariable Long id) {
@@ -67,11 +76,13 @@ public class EmpresaController {
     }
 
     @GetMapping("/{id}/funcionarios")
+    @PreAuthorize("hasRole('ADMINISTRADOR') or hasRole('FUNCIONARIO')")
     public List<FuncionarioResponseDTO> listarFuncionariosPorEmpresa(@PathVariable Long id) {
         return funcionarioService.listarPorEmpresa(id);
     }
 
     @PutMapping("/{empresaId}/usuario/{usuarioId}")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
     public EmpresaResponseDTO vincularUsuario(@PathVariable Long empresaId, @PathVariable Long usuarioId) {
         return empresaService.vincularUsuario(empresaId, usuarioId);
     }

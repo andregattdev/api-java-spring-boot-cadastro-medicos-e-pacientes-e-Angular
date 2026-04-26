@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class LayoutComponent {
   sidebarOpen = true;
+  isStaff = false;
   isAdmin = false;
   isPaciente = false;
   isMedico = false;
@@ -20,6 +21,7 @@ export class LayoutComponent {
     private authService: AuthService,
     private router: Router
   ) {
+    this.isStaff = this.authService.isStaff();
     this.isAdmin = this.authService.isAdmin();
     this.isPaciente = this.authService.isPaciente();
     this.isMedico = this.authService.isMedico();

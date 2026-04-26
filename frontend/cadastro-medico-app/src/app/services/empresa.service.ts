@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Empresa, EmpresaDTO } from '../models/empresa.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EmpresaService {
-  private apiUrl = 'http://localhost:8080/api/empresas';
+  private apiUrl = `${environment.apiUrl}/empresas`;
 
   constructor(
     private http: HttpClient,
@@ -18,6 +19,13 @@ export class EmpresaService {
   listarTodas(): Observable<EmpresaDTO[]> {
     if (isPlatformBrowser(this.platformId)) {
       return this.http.get<EmpresaDTO[]>(this.apiUrl);
+    }
+    return of([]);
+  }
+
+  listarPublico(): Observable<EmpresaDTO[]> {
+    if (isPlatformBrowser(this.platformId)) {
+      return this.http.get<EmpresaDTO[]>(`${this.apiUrl}/public`);
     }
     return of([]);
   }

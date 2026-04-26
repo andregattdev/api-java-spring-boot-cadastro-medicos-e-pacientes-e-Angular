@@ -51,11 +51,21 @@
             <div class="form-outline mb-4">
               <label class="form-label text-muted small fw-semibold text-uppercase" for="tipo">Eu sou um(a):</label>
               <select id="tipo" class="form-select form-select-lg rounded-3" formControlName="tipo" [class.is-invalid]="submitted && f['tipo'].errors">
-                  <option value="PACIENTE">Paciente</option>
-                  <option value="DOUTOR">Doutor Especialista</option>
+                  <option *ngFor="let tipo of tiposUsuario" [value]="tipo">{{ getTipoLabel(tipo) }}</option>
               </select>
               <div *ngIf="submitted && f['tipo'].errors" class="invalid-feedback d-block">
                 <span *ngIf="f['tipo'].errors['required']">Escolha seu perfil</span>
+              </div>
+            </div>
+
+            <div class="form-outline mb-4" *ngIf="f['tipo'].value === 'FUNCIONARIO'">
+              <label class="form-label text-muted small fw-semibold text-uppercase" for="empresaId">Empresa</label>
+              <select id="empresaId" class="form-select form-select-lg rounded-3" formControlName="empresaId" [class.is-invalid]="submitted && f['empresaId'].errors">
+                <option value="">Selecione...</option>
+                <option *ngFor="let empresa of empresas" [value]="empresa.id">{{ empresa.nome }}</option>
+              </select>
+              <div *ngIf="submitted && f['empresaId'].errors" class="invalid-feedback d-block">
+                <span *ngIf="f['empresaId'].errors['required']">Empresa é obrigatória para Secretaria.</span>
               </div>
             </div>
 
